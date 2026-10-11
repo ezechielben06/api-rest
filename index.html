@@ -1,0 +1,4911 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font:
+          14px -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: #fff;
+        color: #000;
+      }
+      img {
+        max-width: 100%;
+      }
+      [hidden]:not([hidden="until-found" i]) {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <title>Atelier API REST</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    />
+    <style>
+      /* Mise en page : manuel technique. Rail de navigation à gauche, colonne de lecture, code affiché ligne par ligne avec son explication à droite.
+   Les couleurs de couche (routeur, controller, service, repository, base) identifient le même rôle partout dans la page. */
+      :root {
+        --bg: #f1f4f8;
+        --surface: #ffffff;
+        --surface-2: #e7ecf2;
+        --fg: #0e1a28;
+        --fg-2: #46586b;
+        --line: #d3dbe5;
+        --accent: #0a7c86;
+        --accent-fg: #ffffff;
+        --accent-soft: #d6eef0;
+        --code-bg: #edf1f6;
+        --syn-kw: #b02a6b;
+        --syn-str: #1d7a3c;
+        --syn-var: #1a5db5;
+        --syn-com: #66788b;
+        --syn-num: #a85500;
+        --syn-fn: #0a7c86;
+        --m-get: #17803f;
+        --m-post: #1b5fcb;
+        --m-put: #a96a0c;
+        --m-delete: #bc3535;
+        --l-route: #566679;
+        --l-ctrl: #1b5fcb;
+        --l-serv: #0a7c86;
+        --l-repo: #a96a0c;
+        --l-db: #7447ae;
+        --l-client: #8a4b2d;
+        --warn-bg: #fff2d6;
+        --warn-fg: #5e3b00;
+        --ok-bg: #ddf3e4;
+        --ok-fg: #0f4f28;
+        --err-bg: #fbe1e1;
+        --err-fg: #7a1f1f;
+        --font-display:
+          "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+        --font-body:
+          "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --font-mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+        --gut: clamp(1rem, 3vw, 2rem);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0a121b;
+          --surface: #111c28;
+          --surface-2: #182636;
+          --fg: #e6edf5;
+          --fg-2: #9aaabb;
+          --line: #243445;
+          --accent: #3fd0c4;
+          --accent-fg: #06201e;
+          --accent-soft: #12383a;
+          --code-bg: #0d1722;
+          --syn-kw: #ff8db9;
+          --syn-str: #86db9f;
+          --syn-var: #7db3ff;
+          --syn-com: #7a8da1;
+          --syn-num: #ffb46b;
+          --syn-fn: #3fd0c4;
+          --m-get: #5ed18e;
+          --m-post: #7db3ff;
+          --m-put: #f0b04f;
+          --m-delete: #ff8a8a;
+          --l-route: #9aaabb;
+          --l-ctrl: #7db3ff;
+          --l-serv: #3fd0c4;
+          --l-repo: #f0b04f;
+          --l-db: #b99bf0;
+          --l-client: #e5a27f;
+          --warn-bg: #3a2d10;
+          --warn-fg: #f6d9a0;
+          --ok-bg: #12351f;
+          --ok-fg: #a9e6bf;
+          --err-bg: #3c1a1a;
+          --err-fg: #f6b4b4;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #0a121b;
+        --surface: #111c28;
+        --surface-2: #182636;
+        --fg: #e6edf5;
+        --fg-2: #9aaabb;
+        --line: #243445;
+        --accent: #3fd0c4;
+        --accent-fg: #06201e;
+        --accent-soft: #12383a;
+        --code-bg: #0d1722;
+        --syn-kw: #ff8db9;
+        --syn-str: #86db9f;
+        --syn-var: #7db3ff;
+        --syn-com: #7a8da1;
+        --syn-num: #ffb46b;
+        --syn-fn: #3fd0c4;
+        --m-get: #5ed18e;
+        --m-post: #7db3ff;
+        --m-put: #f0b04f;
+        --m-delete: #ff8a8a;
+        --l-route: #9aaabb;
+        --l-ctrl: #7db3ff;
+        --l-serv: #3fd0c4;
+        --l-repo: #f0b04f;
+        --l-db: #b99bf0;
+        --l-client: #e5a27f;
+        --warn-bg: #3a2d10;
+        --warn-fg: #f6d9a0;
+        --ok-bg: #12351f;
+        --ok-fg: #a9e6bf;
+        --err-bg: #3c1a1a;
+        --err-fg: #f6b4b4;
+        color-scheme: dark;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 5.5rem;
+      }
+      body {
+        margin: 0;
+        padding-inline: var(--gut);
+        padding-block: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 400 1rem/1.65 var(--font-body);
+        -webkit-text-size-adjust: 100%;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      a {
+        color: var(--accent);
+        text-underline-offset: 0.18em;
+      }
+      code,
+      kbd {
+        font-family: var(--font-mono);
+        font-size: 0.86em;
+        background: var(--surface-2);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+        overflow-wrap: anywhere;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        text-wrap: balance;
+        margin: 0;
+        letter-spacing: -0.01em;
+        line-height: 1.12;
+      }
+      h1 {
+        font-size: clamp(2.3rem, 5.4vw, 3.8rem);
+        font-weight: 750;
+        letter-spacing: -0.025em;
+      }
+      h2 {
+        font-size: clamp(1.7rem, 3.2vw, 2.3rem);
+        font-weight: 700;
+      }
+      h3 {
+        font-size: 1.3rem;
+        font-weight: 650;
+      }
+      p {
+        margin: 0;
+        max-width: 68ch;
+      }
+      ul,
+      ol {
+        margin: 0;
+        padding-left: 1.25rem;
+        max-width: 68ch;
+      }
+      li + li {
+        margin-top: 0.4rem;
+      }
+      .eyebrow {
+        font: 600 0.74rem/1.4 var(--font-mono);
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--fg-2);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
+        align-items: center;
+        max-width: none;
+      }
+      .lead {
+        font-size: 1.15rem;
+        color: var(--fg-2);
+        max-width: 62ch;
+      }
+
+      /* Structure générale */
+      .shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 3.5rem;
+        max-width: 86rem;
+        margin-inline: auto;
+      }
+      @media (min-width: 62rem) {
+        .shell {
+          grid-template-columns: 15.5rem minmax(0, 1fr);
+        }
+      }
+      .main {
+        min-width: 0;
+      }
+      section {
+        padding-block: 3.5rem;
+        border-top: 1px solid var(--line);
+        display: grid;
+        gap: 1.4rem;
+        align-content: start;
+      }
+      section > * {
+        min-width: 0;
+      }
+      .hero {
+        padding-block: 3rem 3.5rem;
+        border-top: 0;
+        display: grid;
+        gap: 1.6rem;
+      }
+      .hero-grid {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: minmax(0, 1fr);
+      }
+      @media (min-width: 72rem) {
+        .hero-grid {
+          grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+          align-items: start;
+        }
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+      .step-head {
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      /* Navigation */
+      .nav {
+        position: sticky;
+        top: env(safe-area-inset-top, 0px);
+        z-index: 30;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        overflow-x: auto;
+        margin-inline: calc(-1 * var(--gut));
+        padding: 0.55rem var(--gut);
+        border-bottom: 1px solid var(--line);
+        scrollbar-width: none;
+      }
+      .nav::-webkit-scrollbar {
+        display: none;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        text-decoration: none;
+        color: var(--fg);
+        font: 700 1rem var(--font-display);
+        white-space: nowrap;
+        flex: none;
+      }
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 1.9rem;
+        height: 1.9rem;
+        border-radius: 6px;
+        background: var(--accent);
+        color: var(--accent-fg);
+        font: 700 0.8rem var(--font-mono);
+      }
+      .nav-groups {
+        display: flex;
+        gap: 0.2rem;
+        align-items: center;
+      }
+      .nav-title {
+        display: none;
+      }
+      .nav a:not(.brand) {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        text-decoration: none;
+        color: var(--fg-2);
+        font-size: 0.88rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 6px;
+      }
+      .nav a:not(.brand):hover {
+        color: var(--fg);
+        background: var(--surface-2);
+      }
+      .nav a[aria-current="true"] {
+        color: var(--accent);
+        background: var(--accent-soft);
+        font-weight: 600;
+      }
+      .nav .no {
+        display: inline-grid;
+        place-items: center;
+        min-width: 1.35rem;
+        height: 1.35rem;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        font: 600 0.7rem var(--font-mono);
+        color: var(--fg-2);
+      }
+      .nav a.done .no {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-fg);
+      }
+      .progress {
+        display: none;
+      }
+      @media (min-width: 62rem) {
+        .nav {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 1.4rem;
+          overflow-x: visible;
+          overflow-y: auto;
+          height: 100vh;
+          margin-inline: 0;
+          padding: 1.6rem 0 1.6rem;
+          border-bottom: 0;
+          top: 0;
+          align-self: start;
+          scrollbar-width: thin;
+        }
+        .nav-groups {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.1rem;
+        }
+        .nav-title {
+          display: block;
+          margin: 1rem 0 0.3rem 0.6rem;
+          font: 600 0.68rem var(--font-mono);
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--fg-2);
+        }
+        .nav-title:first-child {
+          margin-top: 0;
+        }
+        .progress {
+          display: grid;
+          gap: 0.4rem;
+          padding: 0.8rem;
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          background: var(--surface);
+        }
+        .progress .bar {
+          height: 6px;
+          border-radius: 3px;
+          background: var(--surface-2);
+          overflow: hidden;
+        }
+        .progress .bar span {
+          display: block;
+          height: 100%;
+          width: 0;
+          background: var(--accent);
+          transition: width 0.3s;
+        }
+        .progress p {
+          font: 500 0.75rem var(--font-mono);
+          color: var(--fg-2);
+        }
+      }
+
+      /* Boutons et formulaires */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font: 600 0.92rem var(--font-body);
+        color: var(--fg);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn:hover {
+        border-color: var(--accent);
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: var(--accent-fg);
+        border-color: var(--accent);
+      }
+      .btn.primary:hover {
+        filter: brightness(1.08);
+      }
+      .btn.small {
+        font-size: 0.78rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 5px;
+      }
+      .btn[aria-pressed="true"] {
+        background: var(--ok-bg);
+        color: var(--ok-fg);
+        border-color: var(--ok-fg);
+      }
+      input,
+      textarea,
+      select {
+        font: inherit;
+        color: var(--fg);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 0.55rem 0.7rem;
+        max-width: 100%;
+      }
+      textarea {
+        font: 400 0.85rem/1.5 var(--font-mono);
+        width: 100%;
+        resize: vertical;
+      }
+      .done-row {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      /* Pastilles : couches et verbes HTTP */
+      .chip,
+      .verb {
+        --c: var(--fg-2);
+        display: inline-flex;
+        align-items: center;
+        font: 600 0.7rem/1 var(--font-mono);
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        padding: 0.3rem 0.5rem;
+        border-radius: 4px;
+        color: var(--c);
+        background: color-mix(in srgb, var(--c) 13%, var(--surface));
+        border: 1px solid color-mix(in srgb, var(--c) 42%, transparent);
+        white-space: nowrap;
+      }
+      .verb {
+        font-size: 0.76rem;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+      }
+      .l-route {
+        --c: var(--l-route);
+      }
+      .l-ctrl {
+        --c: var(--l-ctrl);
+      }
+      .l-serv {
+        --c: var(--l-serv);
+      }
+      .l-repo {
+        --c: var(--l-repo);
+      }
+      .l-db {
+        --c: var(--l-db);
+      }
+      .l-client {
+        --c: var(--l-client);
+      }
+      .v-get {
+        --c: var(--m-get);
+      }
+      .v-post {
+        --c: var(--m-post);
+      }
+      .v-put {
+        --c: var(--m-put);
+      }
+      .v-delete {
+        --c: var(--m-delete);
+      }
+
+      /* Tableaux */
+      .tablewrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        max-width: 100%;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 34rem;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.65rem 0.85rem;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        font: 600 0.7rem var(--font-mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--fg-2);
+        background: var(--surface-2);
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      td.num,
+      th.num {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Encadrés */
+      .callout {
+        --c: var(--accent);
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 8px;
+        padding: 0.9rem 1.1rem;
+        display: grid;
+        gap: 0.35rem;
+        max-width: 68ch;
+      }
+      .callout .label {
+        font: 700 0.7rem var(--font-mono);
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--c);
+      }
+      .callout.tip {
+        background: var(--accent-soft);
+        border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      }
+      .callout.warn {
+        --c: var(--warn-fg);
+        background: var(--warn-bg);
+        border-color: color-mix(in srgb, var(--warn-fg) 35%, transparent);
+      }
+      .callout.key {
+        --c: var(--l-db);
+        border-color: color-mix(in srgb, var(--l-db) 45%, transparent);
+      }
+
+      /* Blocs de code simples */
+      .codeblock {
+        margin: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--code-bg);
+        max-width: 100%;
+      }
+      .codeblock-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.4rem 0.6rem 0.4rem 0.9rem;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--line);
+        font: 600 0.72rem var(--font-mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--fg-2);
+      }
+      .codeblock pre,
+      pre.http,
+      pre.tree,
+      .resp {
+        margin: 0;
+        padding: 0.85rem 1rem;
+        overflow-x: auto;
+        font: 400 0.82rem/1.6 var(--font-mono);
+        tab-size: 4;
+      }
+      .codeblock pre {
+        color: var(--fg);
+      }
+      .s-com {
+        color: var(--syn-com);
+        font-style: italic;
+      }
+      .s-str {
+        color: var(--syn-str);
+      }
+      .s-var {
+        color: var(--syn-var);
+      }
+      .s-kw {
+        color: var(--syn-kw);
+        font-weight: 500;
+      }
+      .s-num {
+        color: var(--syn-num);
+      }
+      .s-fn {
+        color: var(--syn-fn);
+      }
+      pre.http,
+      pre.tree {
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--fg);
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1.1rem;
+        font-size: 0.82rem;
+        color: var(--fg-2);
+        max-width: none;
+      }
+      .legend span::before {
+        content: "";
+        display: inline-block;
+        width: 0.65rem;
+        height: 0.65rem;
+        border-radius: 2px;
+        background: currentColor;
+        margin-right: 0.4rem;
+        vertical-align: -0.05rem;
+      }
+
+      /* Parcours ligne par ligne */
+      .walk {
+        container-type: inline-size;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        overflow: hidden;
+      }
+      .walk-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.8rem;
+        align-items: center;
+        padding: 0.7rem 1rem;
+        background: var(--surface-2);
+      }
+      .walk-head .file {
+        font: 600 0.88rem var(--font-mono);
+        overflow-wrap: anywhere;
+      }
+      .walk-head .role {
+        color: var(--fg-2);
+        font-size: 0.85rem;
+        flex: 1 1 12rem;
+      }
+      .walk-head .tools {
+        display: flex;
+        gap: 0.4rem;
+        margin-left: auto;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        border-top: 1px solid var(--line);
+      }
+      .row:first-of-type {
+        border-top: 0;
+      }
+      .code {
+        background: var(--code-bg);
+        padding: 0.55rem 0;
+        overflow-x: auto;
+        font: 400 0.8rem/1.6 var(--font-mono);
+        color: var(--fg);
+      }
+      .cl {
+        display: grid;
+        grid-template-columns: 2.6rem max-content;
+        min-height: 1.6em;
+      }
+      .cl .n {
+        text-align: right;
+        padding-right: 0.8rem;
+        color: var(--syn-com);
+        user-select: none;
+        font-variant-numeric: tabular-nums;
+      }
+      .cl .t {
+        white-space: pre;
+        padding-right: 1rem;
+      }
+      .note {
+        padding: 0.8rem 1rem;
+        font-size: 0.93rem;
+        display: grid;
+        gap: 0.55rem;
+        align-content: start;
+        background: var(--surface);
+      }
+      .note p {
+        max-width: none;
+      }
+      .note b {
+        font-weight: 600;
+      }
+      .row.spacer .code {
+        padding: 0;
+        background: var(--code-bg);
+      }
+      .row.spacer .cl {
+        min-height: 0.9rem;
+        line-height: 0.9rem;
+      }
+      .row.spacer .note {
+        padding: 0;
+      }
+      .row:not(.spacer):hover .code {
+        background: color-mix(in srgb, var(--accent) 9%, var(--code-bg));
+      }
+      .row:not(.spacer):hover .note {
+        background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+      }
+      @container (min-width:46rem) {
+        .row {
+          grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+        }
+        .row.spacer {
+          grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+        }
+        .walk.code-only .row,
+        .walk.code-only .row.spacer {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .walk.code-only .note {
+        display: none;
+      }
+      .walk.code-only .row.spacer .cl {
+        min-height: 0.9rem;
+      }
+
+      /* Schéma d'architecture */
+      .stack {
+        display: grid;
+        gap: 0;
+        max-width: 60rem;
+      }
+      .layer {
+        display: grid;
+        gap: 0.3rem 0.9rem;
+        grid-template-columns: minmax(0, 1fr);
+        padding: 0.9rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .layer .who {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .layer .who code {
+        background: transparent;
+        padding: 0;
+        font-weight: 500;
+      }
+      .layer p {
+        font-size: 0.92rem;
+        max-width: none;
+      }
+      .layer .never {
+        color: var(--err-fg);
+      }
+      .arrow {
+        display: flex;
+        justify-content: center;
+        font: 500 0.72rem var(--font-mono);
+        color: var(--fg-2);
+        padding: 0.35rem 0;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .arrow::before {
+        content: "↓";
+      }
+      @media (min-width: 46rem) {
+        .layer {
+          grid-template-columns: 15rem minmax(0, 1fr) minmax(0, 1fr);
+        }
+      }
+      .journey {
+        list-style: none;
+        padding: 0;
+        counter-reset: j;
+        display: grid;
+        gap: 0.6rem;
+        max-width: 62rem;
+      }
+      .journey li {
+        counter-increment: j;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 2rem minmax(0, 1fr);
+        gap: 0.2rem 0.8rem;
+        padding: 0.7rem 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .journey li::before {
+        content: counter(j);
+        display: grid;
+        place-items: center;
+        width: 1.7rem;
+        height: 1.7rem;
+        border-radius: 50%;
+        background: var(--surface-2);
+        font: 600 0.78rem var(--font-mono);
+        grid-row: span 2;
+      }
+      .journey .chip {
+        justify-self: start;
+      }
+      .journey p {
+        font-size: 0.93rem;
+        max-width: none;
+      }
+
+      /* Anatomie d'une URL */
+      .urlparts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem 0;
+        font: 500 1.05rem var(--font-mono);
+      }
+      .urlparts .seg {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding-right: 0.05rem;
+      }
+      .urlparts .seg b {
+        padding: 0.4rem 0.5rem;
+        border-bottom: 3px solid var(--c);
+      }
+      .urlparts .seg small {
+        font: 500 0.68rem var(--font-mono);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--c);
+        padding-left: 0.5rem;
+      }
+      .urlparts .seg:nth-child(1) {
+        --c: var(--l-route);
+      }
+      .urlparts .seg:nth-child(2) {
+        --c: var(--l-ctrl);
+      }
+      .urlparts .seg:nth-child(3) {
+        --c: var(--l-serv);
+      }
+      .urlparts .seg:nth-child(4) {
+        --c: var(--l-repo);
+      }
+      .urlparts .seg:nth-child(5) {
+        --c: var(--l-db);
+      }
+
+      /* Hero */
+      .hero-card {
+        display: grid;
+        gap: 0.8rem;
+        min-width: 0;
+      }
+
+      /* Simulateur */
+      .sim-wrap {
+        container-type: inline-size;
+      }
+      .sim {
+        display: grid;
+        gap: 1.4rem;
+        grid-template-columns: minmax(0, 1fr);
+      }
+      @container (min-width:50rem) {
+        .sim {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        }
+      }
+      .sim-col {
+        display: grid;
+        gap: 1rem;
+        align-content: start;
+        min-width: 0;
+      }
+      .panel {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 10px;
+        padding: 1rem;
+        display: grid;
+        gap: 0.85rem;
+        min-width: 0;
+      }
+      .panel h3 {
+        font-size: 1.02rem;
+      }
+      .presets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .presets button {
+        font: 500 0.8rem var(--font-body);
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--fg);
+        cursor: pointer;
+      }
+      .presets button:hover {
+        border-color: var(--accent);
+      }
+      .presets button[aria-pressed="true"] {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .verbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .verbs input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .verbs label {
+        cursor: pointer;
+      }
+      .verbs input:checked + label {
+        outline: 2px solid var(--c);
+        outline-offset: 2px;
+        background: color-mix(in srgb, var(--c) 26%, var(--surface));
+      }
+      .verbs input:focus-visible + label {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      .field {
+        display: grid;
+        gap: 0.3rem;
+        font-size: 0.85rem;
+        color: var(--fg-2);
+      }
+      .field > span {
+        font: 600 0.7rem var(--font-mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .urlbox {
+        display: flex;
+        align-items: stretch;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        overflow: hidden;
+        min-width: 0;
+      }
+      .urlbox .base {
+        display: flex;
+        align-items: center;
+        padding: 0 0.6rem;
+        background: var(--surface-2);
+        font: 400 0.8rem var(--font-mono);
+        color: var(--fg-2);
+        white-space: nowrap;
+      }
+      .urlbox input {
+        border: 0;
+        border-radius: 0;
+        flex: 1;
+        min-width: 0;
+        font: 500 0.9rem var(--font-mono);
+      }
+      .hint {
+        padding: 0.7rem 0.9rem;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        font-size: 0.9rem;
+        max-width: none;
+      }
+      .resp-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.9rem;
+        align-items: center;
+      }
+      .status {
+        font: 700 0.85rem var(--font-mono);
+        padding: 0.3rem 0.65rem;
+        border-radius: 5px;
+        background: var(--ok-bg);
+        color: var(--ok-fg);
+      }
+      .status.bad {
+        background: var(--err-bg);
+        color: var(--err-fg);
+      }
+      .resp-head small {
+        color: var(--fg-2);
+        font: 400 0.78rem var(--font-mono);
+        overflow-wrap: anywhere;
+      }
+      .resp {
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        min-height: 5rem;
+        max-height: 20rem;
+        overflow: auto;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .trace {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.45rem;
+        max-width: none;
+      }
+      .trace li {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 6.2rem minmax(0, 1fr);
+        gap: 0.2rem 0.6rem;
+        align-items: start;
+        font-size: 0.86rem;
+      }
+      .trace .chip {
+        justify-self: start;
+      }
+      .trace code {
+        display: block;
+        margin-top: 0.25rem;
+        white-space: pre-wrap;
+        padding: 0.4rem 0.55rem;
+        font-size: 0.78rem;
+      }
+      @media (max-width: 30rem) {
+        .trace li {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .snip-tabs {
+        display: flex;
+        gap: 0.4rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .snip-tabs .btn[aria-pressed="true"] {
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .flash {
+        animation: flash 1.2s ease-out;
+      }
+      @keyframes flash {
+        from {
+          background: color-mix(in srgb, var(--accent) 30%, transparent);
+        }
+        to {
+          background: transparent;
+        }
+      }
+      .dbnote {
+        font-size: 0.82rem;
+        color: var(--fg-2);
+        max-width: none;
+      }
+
+      /* Quiz */
+      .quiz {
+        display: grid;
+        gap: 1rem;
+        max-width: 44rem;
+        padding: 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+      }
+      .quiz .q {
+        font: 650 1.2rem/1.3 var(--font-display);
+        text-wrap: balance;
+      }
+      .quiz .opts {
+        display: grid;
+        gap: 0.5rem;
+      }
+      .quiz .opt {
+        text-align: left;
+        font: 500 0.95rem var(--font-body);
+        color: var(--fg);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0.7rem 0.9rem;
+        cursor: pointer;
+      }
+      .quiz .opt:hover:not(:disabled) {
+        border-color: var(--accent);
+      }
+      .quiz .opt.good {
+        background: var(--ok-bg);
+        border-color: var(--ok-fg);
+        color: var(--ok-fg);
+      }
+      .quiz .opt.bad {
+        background: var(--err-bg);
+        border-color: var(--err-fg);
+        color: var(--err-fg);
+      }
+      .quiz .why {
+        padding: 0.7rem 0.9rem;
+        border-radius: 8px;
+        background: var(--surface-2);
+        font-size: 0.92rem;
+        max-width: none;
+      }
+      .quiz .meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        font: 600 0.74rem var(--font-mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--fg-2);
+      }
+      .quiz .score {
+        font: 700 2.4rem var(--font-display);
+      }
+
+      /* Accordéon */
+      details {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        max-width: 62rem;
+      }
+      summary {
+        cursor: pointer;
+        padding: 0.85rem 1rem;
+        font-weight: 600;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+      }
+      summary::-webkit-details-marker {
+        display: none;
+      }
+      summary::after {
+        content: "+";
+        font: 500 1.3rem var(--font-mono);
+        color: var(--accent);
+      }
+      details[open] summary::after {
+        content: "−";
+      }
+      details > .inner {
+        padding: 0 1rem 1rem;
+        display: grid;
+        gap: 0.8rem;
+      }
+      .qa {
+        display: grid;
+        gap: 0.6rem;
+      }
+      footer {
+        padding-block: 3rem;
+        border-top: 1px solid var(--line);
+        color: var(--fg-2);
+        font-size: 0.9rem;
+      }
+    </style>
+    <div class="shell">
+      <nav class="nav" aria-label="Plan du cours">
+        <a class="brand" href="#intro"
+          ><span class="brand-mark" aria-hidden="true">{ }</span
+          ><span>Atelier API REST</span></a
+        >
+        <div class="nav-groups">
+          <p class="nav-title">Comprendre</p>
+          <a href="#objectif">Objectif du TP</a>
+          <a href="#rest">Les bases de REST</a>
+          <a href="#architecture">Architecture</a>
+          <p class="nav-title">Construire</p>
+          <a href="#preparer">Préparer le poste</a>
+          <a href="#sql" data-step="sql"
+            ><span class="no">1</span>Base de données</a
+          >
+          <a href="#database" data-step="database"
+            ><span class="no">2</span>Connexion PDO</a
+          >
+          <a href="#repository" data-step="repository"
+            ><span class="no">3</span>Repository</a
+          >
+          <a href="#service" data-step="service"
+            ><span class="no">4</span>Service</a
+          >
+          <a href="#controller" data-step="controller"
+            ><span class="no">5</span>Controller</a
+          >
+          <a href="#routeur" data-step="routeur"
+            ><span class="no">6</span>Routeur</a
+          >
+          <a href="#lancer" data-step="lancer"
+            ><span class="no">7</span>Lancer et tester</a
+          >
+          <p class="nav-title">Pratiquer</p>
+          <a href="#simulateur">Simulateur</a>
+          <a href="#client" data-step="client"
+            ><span class="no">8</span>Client JavaScript</a
+          >
+          <a href="#quiz">Quiz</a>
+          <p class="nav-title">Terminer</p>
+          <a href="#soutenance">Soutenance et binôme</a>
+          <a href="#loin">Aller plus loin</a>
+        </div>
+        <div class="progress">
+          <div class="bar"><span id="progress-bar"></span></div>
+          <p id="progress-text">0 / 8 étapes terminées</p>
+        </div>
+      </nav>
+
+      <main class="main">
+        <!-- ===================== INTRO ===================== -->
+        <header id="intro" class="hero">
+          <div class="hero-grid">
+            <div style="display: grid; gap: 1.4rem; align-content: start">
+              <p class="eyebrow">Cours pratique · PHP natif · MySQL · JSON</p>
+              <h1>Construire une API REST pas à pas</h1>
+              <p class="lead">
+                Tu vas écrire une API de gestion de produits pour un magasin,
+                sans framework. Chaque fichier est expliqué ligne par ligne. À
+                la fin, tu testes tout dans un simulateur qui montre quelle
+                couche traite chaque requête.
+              </p>
+              <div class="hero-actions">
+                <a class="btn primary" href="#objectif">Commencer le cours</a>
+                <a class="btn" href="#simulateur">Essayer le simulateur</a>
+              </div>
+            </div>
+            <div class="hero-card">
+              <figure class="codeblock" data-lang="bash" data-title="Requête">
+                <pre>curl http://localhost:8000/produits</pre>
+              </figure>
+              <figure
+                class="codeblock"
+                data-lang="json"
+                data-title="Réponse · 200 OK"
+              >
+                <pre>
+[
+  {
+    "id": 1,
+    "nom": "Savon",
+    "prix": "500.00",
+    "stock": 20
+  },
+  {
+    "id": 2,
+    "nom": "Riz 5kg",
+    "prix": "3500.00",
+    "stock": 10
+  }
+]</pre
+                >
+              </figure>
+            </div>
+          </div>
+        </header>
+
+        <!-- ===================== OBJECTIF ===================== -->
+        <section id="objectif">
+          <div class="step-head">
+            <p class="eyebrow">Comprendre</p>
+            <h2>Ce que tu vas construire</h2>
+            <p class="lead">
+              Une API qui permet de lister, ajouter, modifier et supprimer les
+              produits d'un magasin. Pas de ventes, pas de catégories, pas
+              d'alertes pour l'instant. On commence simple.
+            </p>
+          </div>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Méthode</th>
+                  <th>URL</th>
+                  <th>Action</th>
+                  <th>Succès</th>
+                  <th>Échec</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="verb v-get">GET</span></td>
+                  <td><code>/produits</code></td>
+                  <td>Lister tous les produits</td>
+                  <td class="num">200</td>
+                  <td>aucun cas prévu</td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-get">GET</span></td>
+                  <td><code>/produits/{id}</code></td>
+                  <td>Lire un produit</td>
+                  <td class="num">200</td>
+                  <td class="num">404</td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-post">POST</span></td>
+                  <td><code>/produits</code></td>
+                  <td>Ajouter un produit</td>
+                  <td class="num">201</td>
+                  <td class="num">400</td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-put">PUT</span></td>
+                  <td><code>/produits/{id}</code></td>
+                  <td>Modifier un produit</td>
+                  <td class="num">200</td>
+                  <td class="num">400</td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-delete">DELETE</span></td>
+                  <td><code>/produits/{id}</code></td>
+                  <td>Supprimer un produit</td>
+                  <td class="num">200</td>
+                  <td class="num">404</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Ce qu'il faut savoir avant de commencer</h3>
+          <ul>
+            <li>Écrire un peu de PHP : variables, fonctions, tableaux.</li>
+            <li>Savoir ce qu'est une base de données MySQL.</li>
+            <li>Avoir installé XAMPP ou WAMP, qui fournissent MySQL.</li>
+            <li>Savoir utiliser un terminal simple.</li>
+          </ul>
+          <p>
+            Si tu ne sais pas tout ça, ce n'est pas grave. Chaque ligne de code
+            du cours est commentée pour te guider.
+          </p>
+        </section>
+
+        <!-- ===================== REST ===================== -->
+        <section id="rest">
+          <div class="step-head">
+            <p class="eyebrow">Comprendre</p>
+            <h2>Les bases de REST</h2>
+            <p class="lead">
+              Une API est un contrat entre deux programmes. Le client
+              (navigateur, application mobile, script) envoie une requête HTTP.
+              Le serveur répond. Le client ne sait rien de PHP ni de MySQL : il
+              connaît seulement l'URL et le format des données.
+            </p>
+          </div>
+          <p>
+            REST est une manière d'organiser ce contrat. Les choses que l'on
+            manipule s'appellent des <b>ressources</b> (ici, les produits) et
+            chacune a une URL. Les actions sont exprimées par le
+            <b>verbe HTTP</b>. Les données voyagent en <b>JSON</b>. Le serveur
+            ne garde aucun souvenir entre deux requêtes : chaque requête
+            contient tout ce qu'il faut pour être traitée.
+          </p>
+
+          <h3>Anatomie d'une URL</h3>
+          <div
+            class="urlparts"
+            role="img"
+            aria-label="URL découpée : protocole http, hôte localhost, port 8000, ressource produits, identifiant 3"
+          >
+            <div class="seg"><b>http://</b><small>protocole</small></div>
+            <div class="seg"><b>localhost</b><small>hôte</small></div>
+            <div class="seg"><b>:8000</b><small>port</small></div>
+            <div class="seg"><b>/produits</b><small>ressource</small></div>
+            <div class="seg"><b>/3</b><small>identifiant</small></div>
+          </div>
+          <p>
+            Le protocole dit comment parler, l'hôte et le port désignent la
+            machine et le programme qui écoute, la ressource dit quelle
+            collection on vise, l'identifiant désigne un élément précis. Sans
+            identifiant, on parle de toute la collection.
+          </p>
+
+          <h3>Anatomie d'une requête et d'une réponse</h3>
+          <pre class="http"><span class="s-kw">POST /produits HTTP/1.1</span>
+<span class="s-fn">Host:</span> <span class="s-var">localhost:8000</span>
+<span class="s-fn">Content-Type:</span> <span class="s-var">application/json</span>
+
+<span class="s-str">{"nom":"Lait","prix":800,"stock":15}</span></pre>
+          <pre class="http"><span class="s-kw">HTTP/1.1 201 Created</span>
+<span class="s-fn">Content-Type:</span> <span class="s-var">application/json</span>
+
+<span class="s-str">{"id":"3","message":"Produit créé"}</span></pre>
+          <div class="legend">
+            <span style="color: var(--syn-kw)"
+              >Première ligne : méthode, chemin, version, ou code de
+              statut</span
+            >
+            <span style="color: var(--syn-fn)">Nom d'un en-tête</span>
+            <span style="color: var(--syn-var)">Valeur d'un en-tête</span>
+            <span style="color: var(--syn-str)"
+              >Corps du message (après une ligne vide)</span
+            >
+          </div>
+          <p>
+            Les en-têtes sont des informations sur le message : le type de
+            contenu, la taille, la langue. La ligne vide sépare les en-têtes du
+            corps. Une requête GET n'a en général pas de corps.
+          </p>
+
+          <h3>Les verbes HTTP et le CRUD</h3>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Opération</th>
+                  <th>Verbe</th>
+                  <th>SQL</th>
+                  <th>Méthode du Controller</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Créer</td>
+                  <td><span class="verb v-post">POST</span></td>
+                  <td><code>INSERT</code></td>
+                  <td><code>store()</code></td>
+                </tr>
+                <tr>
+                  <td>Lire la liste</td>
+                  <td><span class="verb v-get">GET</span></td>
+                  <td><code>SELECT</code></td>
+                  <td><code>index()</code></td>
+                </tr>
+                <tr>
+                  <td>Lire un élément</td>
+                  <td><span class="verb v-get">GET</span></td>
+                  <td><code>SELECT … WHERE id</code></td>
+                  <td><code>show($id)</code></td>
+                </tr>
+                <tr>
+                  <td>Modifier</td>
+                  <td><span class="verb v-put">PUT</span></td>
+                  <td><code>UPDATE</code></td>
+                  <td><code>update($id)</code></td>
+                </tr>
+                <tr>
+                  <td>Supprimer</td>
+                  <td><span class="verb v-delete">DELETE</span></td>
+                  <td><code>DELETE</code></td>
+                  <td><code>destroy($id)</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            PUT remplace la ressource en entier, c'est pourquoi on renvoie nom,
+            prix et stock à chaque modification. Il existe aussi PATCH pour
+            modifier une partie seulement, mais il n'est pas utilisé dans ce TP.
+          </p>
+
+          <h3>Les codes de statut utilisés</h3>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Signification</th>
+                  <th>Où dans le TP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="num"><b>200</b></td>
+                  <td>OK</td>
+                  <td>La requête a réussi.</td>
+                  <td>index, show, update, destroy</td>
+                </tr>
+                <tr>
+                  <td class="num"><b>201</b></td>
+                  <td>Created</td>
+                  <td>Une ressource vient d'être créée.</td>
+                  <td>store</td>
+                </tr>
+                <tr>
+                  <td class="num"><b>400</b></td>
+                  <td>Bad Request</td>
+                  <td>Le client a envoyé des données invalides.</td>
+                  <td>store, update</td>
+                </tr>
+                <tr>
+                  <td class="num"><b>404</b></td>
+                  <td>Not Found</td>
+                  <td>La ressource ou la route n'existe pas.</td>
+                  <td>show, destroy, route inconnue</td>
+                </tr>
+                <tr>
+                  <td class="num"><b>500</b></td>
+                  <td>Internal Server Error</td>
+                  <td>Bug ou panne côté serveur.</td>
+                  <td>erreur PHP non attrapée</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Retiens la règle simple : <b>2xx</b> signifie que tout va bien,
+            <b>4xx</b> signifie que la faute vient du client,
+            <b>5xx</b> signifie que la faute vient du serveur.
+          </p>
+
+          <h3>JSON en trente secondes</h3>
+          <figure
+            class="codeblock"
+            data-lang="json"
+            data-title="Un produit en JSON"
+          >
+            <pre>
+{
+  "id": 1,
+  "nom": "Savon",
+  "prix": "500.00",
+  "stock": 20,
+  "promo": null,
+  "tags": ["hygiène", "maison"]
+}</pre
+            >
+          </figure>
+          <ul>
+            <li>
+              Un objet est entouré d'accolades et contient des paires
+              <code>"clé": valeur</code>.
+            </li>
+            <li>
+              Les clés et les textes utilisent des guillemets doubles, jamais
+              des apostrophes.
+            </li>
+            <li>
+              Les valeurs possibles sont : texte, nombre,
+              <code>true</code>/<code>false</code>, <code>null</code>, tableau
+              <code>[ ]</code> et objet <code>{ }</code>.
+            </li>
+            <li>Pas de virgule après le dernier élément.</li>
+            <li>
+              En PHP, un tableau associatif devient un objet JSON avec
+              <code>json_encode()</code>, et
+              <code>json_decode($texte, true)</code> fait l'inverse.
+            </li>
+          </ul>
+        </section>
+
+        <!-- ===================== ARCHITECTURE ===================== -->
+        <section id="architecture">
+          <div class="step-head">
+            <p class="eyebrow">Comprendre</p>
+            <h2>Une architecture en couches</h2>
+            <p class="lead">
+              Le TP sépare le code en quatre fichiers, plus le point d'entrée.
+              Chaque couche a un seul métier et ne fait pas celui des autres.
+            </p>
+          </div>
+
+          <div class="stack">
+            <div class="layer">
+              <div class="who">
+                <span class="chip l-route">Routeur</span
+                ><code>public/index.php</code>
+              </div>
+              <p>
+                <b>Rôle.</b> Lire la méthode HTTP et l'URL, puis choisir la
+                bonne méthode du Controller.
+              </p>
+              <p class="never"><b>Jamais.</b> De logique métier ni de SQL.</p>
+            </div>
+            <div class="arrow">appelle</div>
+            <div class="layer">
+              <div class="who">
+                <span class="chip l-ctrl">Controller</span
+                ><code>src/ProduitController.php</code>
+              </div>
+              <p>
+                <b>Rôle.</b> Lire la requête, appeler le Service, renvoyer du
+                JSON avec le bon code de statut.
+              </p>
+              <p class="never">
+                <b>Jamais.</b> De règles de validation ni de SQL.
+              </p>
+            </div>
+            <div class="arrow">appelle</div>
+            <div class="layer">
+              <div class="who">
+                <span class="chip l-serv">Service</span
+                ><code>src/ProduitService.php</code>
+              </div>
+              <p>
+                <b>Rôle.</b> Appliquer les règles du magasin : nom obligatoire,
+                prix positif, stock non négatif.
+              </p>
+              <p class="never">
+                <b>Jamais.</b> De codes HTTP, de JSON ni de SQL.
+              </p>
+            </div>
+            <div class="arrow">appelle</div>
+            <div class="layer">
+              <div class="who">
+                <span class="chip l-repo">Repository</span
+                ><code>src/ProduitRepository.php</code>
+              </div>
+              <p>
+                <b>Rôle.</b> Exécuter les requêtes SQL et renvoyer les
+                résultats.
+              </p>
+              <p class="never"><b>Jamais.</b> De règles métier.</p>
+            </div>
+            <div class="arrow">utilise</div>
+            <div class="layer">
+              <div class="who">
+                <span class="chip l-db">Base</span><code>src/Database.php</code>
+              </div>
+              <p>
+                <b>Rôle.</b> Ouvrir la connexion à MySQL, où les produits sont
+                stockés.
+              </p>
+              <p class="never"><b>Jamais.</b> De requêtes sur les produits.</p>
+            </div>
+          </div>
+
+          <h3>Les fichiers du projet</h3>
+          <pre class="tree"><b>magasin/</b>
+├── <b>public/</b>
+│   └── <span class="s-var">index.php</span>                  ← routeur, toutes les requêtes passent ici
+├── <b>src/</b>
+│   ├── <span class="s-str">Database.php</span>               ← connexion à MySQL
+│   ├── <span class="s-num">ProduitRepository.php</span>      ← parle à la base de données
+│   ├── <span class="s-fn">ProduitService.php</span>         ← vérifie les règles
+│   └── <span class="s-kw">ProduitController.php</span>      ← reçoit les requêtes HTTP
+└── <b>sql/</b>
+    └── <span class="s-com">schema.sql</span>                 ← script de création de la base</pre>
+          <p>
+            Seulement quatre fichiers dans <code>src</code>, pour que tu voies
+            clairement le rôle de chaque couche sans te perdre.
+          </p>
+
+          <div class="callout key">
+            <span class="label">Vocabulaire</span>
+            <p>
+              On parle souvent de « MVC » pour ce découpage. Plus précisément,
+              c'est une architecture en couches (Controller, Service,
+              Repository). Dans une API, la « vue » se réduit à la réponse JSON.
+              Le principe reste le même : un fichier, une responsabilité.
+            </p>
+          </div>
+
+          <h3>
+            Le voyage d'une requête <span class="verb v-post">POST</span>
+            <code>/produits</code>
+          </h3>
+          <ol class="journey">
+            <li>
+              <span class="chip l-client">Client</span>
+              <p>
+                Envoie <code>POST /produits</code> avec le JSON
+                <code>{"nom":"Lait","prix":800,"stock":15}</code>.
+              </p>
+            </li>
+            <li>
+              <span class="chip l-route">Routeur</span>
+              <p>
+                <code>index.php</code> lit la méthode et le chemin. Il ne reste
+                aucun morceau après <code>/produits</code>, donc la condition «
+                POST et zéro morceau » est vraie.
+              </p>
+            </li>
+            <li>
+              <span class="chip l-ctrl">Controller</span>
+              <p>
+                <code>store()</code> est appelée. Elle lit le corps de la
+                requête avec <code>php://input</code> et le décode avec
+                <code>json_decode</code>.
+              </p>
+            </li>
+            <li>
+              <span class="chip l-ctrl">Controller</span>
+              <p>
+                Elle passe le tableau au Service avec
+                <code>$this->service->create($data)</code>.
+              </p>
+            </li>
+            <li>
+              <span class="chip l-serv">Service</span>
+              <p>
+                <code>valider($data)</code> contrôle le nom, le prix et le
+                stock. Si une règle échoue, une exception part et rien ne
+                descend plus bas.
+              </p>
+            </li>
+            <li>
+              <span class="chip l-serv">Service</span>
+              <p>
+                Les données sont valides : il appelle
+                <code>$this->repo->create($nom, $prix, $stock)</code>.
+              </p>
+            </li>
+            <li>
+              <span class="chip l-repo">Repository</span>
+              <p>
+                Prépare l'<code>INSERT</code>, l'exécute avec les trois valeurs,
+                puis lit le nouvel identifiant avec <code>lastInsertId()</code>.
+              </p>
+            </li>
+            <li>
+              <span class="chip l-ctrl">Controller</span>
+              <p>
+                L'identifiant remonte jusqu'ici. <code>repondre()</code> envoie
+                <code>201</code> et le JSON
+                <code>{"id":"3","message":"Produit créé"}</code>.
+              </p>
+            </li>
+          </ol>
+          <p>
+            Si l'étape 5 échoue, les étapes 6 et 7 n'ont jamais lieu. Le
+            Controller attrape l'exception et répond <code>400</code>.
+          </p>
+        </section>
+
+        <!-- ===================== PREPARER ===================== -->
+        <section id="preparer">
+          <div class="step-head">
+            <p class="eyebrow">Construire</p>
+            <h2>Préparer le poste de travail</h2>
+            <p class="lead">Quatre vérifications avant d'écrire du code.</p>
+          </div>
+          <ol>
+            <li>
+              <b>Démarre MySQL</b> depuis le panneau de contrôle de XAMPP ou
+              WAMP. Démarre aussi Apache si tu veux utiliser phpMyAdmin. L'API
+              elle-même tournera sur le serveur intégré de PHP, donc Apache et
+              ton API n'entrent pas en conflit.
+            </li>
+            <li>
+              <b>Vérifie que PHP répond</b> dans un terminal avec la commande
+              ci-dessous. Sous Windows, si le terminal ne la connaît pas, ajoute
+              le dossier <code>php</code> de XAMPP (par exemple
+              <code>C:\xampp\php</code>) à la variable d'environnement PATH,
+              puis rouvre le terminal.
+            </li>
+            <li>
+              <b>Crée les dossiers</b> du projet, avec les commandes ci-dessous
+              ou à la main dans l'explorateur de fichiers.
+            </li>
+            <li>
+              <b>Prépare un éditeur</b> de code, par exemple VS Code, et ouvre
+              le dossier <code>magasin</code>.
+            </li>
+          </ol>
+          <figure class="codeblock" data-lang="bash" data-title="Terminal">
+            <pre>
+php -v
+mkdir -p magasin/public magasin/src magasin/sql</pre
+            >
+          </figure>
+          <p>
+            La première commande affiche la version de PHP installée. La seconde
+            crée l'arborescence (sous Windows PowerShell, écris
+            <code>mkdir magasin, magasin\public, magasin\src, magasin\sql</code
+            >).
+          </p>
+        </section>
+
+        <!-- ===================== ETAPE 1 : SQL ===================== -->
+        <section id="sql" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-db">Base</span> Étape 1 sur 7
+            </p>
+            <h2>Créer la base de données</h2>
+            <p class="lead">
+              Ouvre phpMyAdmin (<code>http://localhost/phpmyadmin</code>),
+              choisis l'onglet SQL, colle le script et clique sur Exécuter. Tu
+              peux aussi enregistrer ce contenu dans
+              <code>sql/schema.sql</code> pour le garder.
+            </p>
+          </div>
+          <div
+            class="walk"
+            data-src="src-sql"
+            data-lang="sql"
+            data-file="sql/schema.sql"
+            data-layer="db"
+            data-role="Script de création de la base et de la table"
+          ></div>
+          <div class="callout tip">
+            <span class="label">Vérifier</span>
+            <p>
+              Exécute <code>SELECT * FROM produits;</code>. Tu dois voir deux
+              lignes : Savon et Riz 5kg, avec les identifiants 1 et 2.
+            </p>
+          </div>
+          <div class="done-row" data-step="sql"></div>
+        </section>
+
+        <!-- ===================== ETAPE 2 : DATABASE ===================== -->
+        <section id="database" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-db">Base</span> Étape 2 sur 7
+            </p>
+            <h2>Le fichier de connexion</h2>
+            <p class="lead">
+              Ce fichier ouvre une connexion à MySQL et la renvoie. Tous les
+              autres fichiers qui parlent à la base passent par lui.
+            </p>
+          </div>
+          <div
+            class="walk"
+            data-src="src-database"
+            data-lang="php"
+            data-file="src/Database.php"
+            data-layer="db"
+            data-role="Connexion à MySQL avec PDO"
+          ></div>
+          <div class="callout tip">
+            <span class="label">Tester seul</span>
+            <p>
+              Crée un fichier temporaire <code>test.php</code> à la racine de
+              <code>magasin</code>, lance-le avec <code>php test.php</code>,
+              puis supprime-le. Si tu vois « Connexion réussie », la base
+              répond.
+            </p>
+          </div>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="test.php (temporaire)"
+          >
+            <pre>
+&lt;?php
+require_once __DIR__ . '/src/Database.php';
+$pdo = Database::connect();
+echo 'Connexion réussie';</pre
+            >
+          </figure>
+          <div class="done-row" data-step="database"></div>
+        </section>
+
+        <!-- ===================== ETAPE 3 : REPOSITORY ===================== -->
+        <section id="repository" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-repo">Repository</span> Étape 3 sur 7
+            </p>
+            <h2>La couche Repository</h2>
+            <p class="lead">
+              Il ne fait que parler à la base de données. Aucune règle métier
+              ici : il exécute les requêtes SQL et rend les résultats.
+            </p>
+          </div>
+          <div
+            class="walk"
+            data-src="src-repository"
+            data-lang="php"
+            data-file="src/ProduitRepository.php"
+            data-layer="repo"
+            data-role="Les cinq requêtes SQL du CRUD"
+          ></div>
+          <div class="callout key">
+            <span class="label">À retenir</span>
+            <p>
+              Chaque requête qui reçoit une valeur de l'extérieur utilise
+              <code>prepare()</code> puis <code>execute()</code>. Les valeurs ne
+              sont jamais collées dans le texte SQL. C'est ce qui bloque les
+              injections SQL.
+            </p>
+          </div>
+          <div class="callout warn">
+            <span class="label">Piège classique</span>
+            <p>
+              Un <code>UPDATE</code> ou un <code>DELETE</code> sans
+              <code>WHERE</code> touche toutes les lignes de la table. Relis
+              toujours cette clause avant de lancer.
+            </p>
+          </div>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="test.php (temporaire)"
+          >
+            <pre>
+&lt;?php
+require_once __DIR__ . '/src/ProduitRepository.php';
+$repo = new ProduitRepository();
+print_r($repo-&gt;findAll());</pre
+            >
+          </figure>
+          <div class="done-row" data-step="repository"></div>
+        </section>
+
+        <!-- ===================== ETAPE 4 : SERVICE ===================== -->
+        <section id="service" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-serv">Service</span> Étape 4 sur 7
+            </p>
+            <h2>La couche Service</h2>
+            <p class="lead">
+              Elle vérifie que les données respectent les règles du magasin
+              avant de les envoyer à la base. Si demain tu changes de base de
+              données, seul le Repository change et le Service reste identique.
+            </p>
+          </div>
+          <div
+            class="walk"
+            data-src="src-service"
+            data-lang="php"
+            data-file="src/ProduitService.php"
+            data-layer="serv"
+            data-role="Règles métier et existence des produits"
+          ></div>
+          <h3>Les règles métier du TP</h3>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Champ</th>
+                  <th>Règle</th>
+                  <th>Message de l'exception</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>nom</code></td>
+                  <td>Obligatoire, non vide</td>
+                  <td>Le nom est obligatoire</td>
+                </tr>
+                <tr>
+                  <td><code>prix</code></td>
+                  <td>Présent et strictement supérieur à 0</td>
+                  <td>Le prix doit être supérieur à 0</td>
+                </tr>
+                <tr>
+                  <td><code>stock</code></td>
+                  <td>Présent et supérieur ou égal à 0</td>
+                  <td>Le stock ne peut pas être négatif</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout key">
+            <span class="label">Exceptions</span>
+            <p>
+              Le Service ne sait pas ce qu'est HTTP. Quand quelque chose ne va
+              pas, il lève une exception avec <code>throw</code>. L'exécution
+              s'arrête net et remonte jusqu'au <code>catch</code> du Controller,
+              qui choisit le code de statut.
+            </p>
+          </div>
+          <div class="done-row" data-step="service"></div>
+        </section>
+
+        <!-- ===================== ETAPE 5 : CONTROLLER ===================== -->
+        <section id="controller" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-ctrl">Controller</span> Étape 5 sur 7
+            </p>
+            <h2>La couche Controller</h2>
+            <p class="lead">
+              Elle reçoit les requêtes HTTP, appelle le Service et renvoie une
+              réponse JSON. Elle ne contient aucune règle métier.
+            </p>
+          </div>
+          <div
+            class="walk"
+            data-src="src-controller"
+            data-lang="php"
+            data-file="src/ProduitController.php"
+            data-layer="ctrl"
+            data-role="Cinq actions et une fonction de réponse JSON"
+          ></div>
+          <h3>Du métier au HTTP</h3>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Méthode</th>
+                  <th>Si tout va bien</th>
+                  <th>Si le Service lève une exception</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>index()</code></td>
+                  <td class="num">200 + liste</td>
+                  <td>aucune attrapée</td>
+                </tr>
+                <tr>
+                  <td><code>show($id)</code></td>
+                  <td class="num">200 + produit</td>
+                  <td class="num">404</td>
+                </tr>
+                <tr>
+                  <td><code>store()</code></td>
+                  <td class="num">201 + id</td>
+                  <td class="num">400</td>
+                </tr>
+                <tr>
+                  <td><code>update($id)</code></td>
+                  <td class="num">200</td>
+                  <td class="num">400</td>
+                </tr>
+                <tr>
+                  <td><code>destroy($id)</code></td>
+                  <td class="num">200</td>
+                  <td class="num">404</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn">
+            <span class="label">Observe bien</span>
+            <p>
+              Dans <code>update()</code>, un produit inexistant donne
+              <b>400</b> alors que dans <code>destroy()</code> il donne
+              <b>404</b>. C'est une petite incohérence du TP, que tu peux
+              constater dans le simulateur et corriger dans la section « Aller
+              plus loin ».
+            </p>
+          </div>
+          <div class="done-row" data-step="controller"></div>
+        </section>
+
+        <!-- ===================== ETAPE 6 : ROUTEUR ===================== -->
+        <section id="routeur" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-route">Routeur</span> Étape 6 sur 7
+            </p>
+            <h2>Le point d'entrée</h2>
+            <p class="lead">
+              Toutes les requêtes arrivent dans <code>public/index.php</code>.
+              Il lit la méthode et l'URL, puis décide quelle méthode du
+              Controller appeler.
+            </p>
+          </div>
+          <div
+            class="walk"
+            data-src="src-index"
+            data-lang="php"
+            data-file="public/index.php"
+            data-layer="route"
+            data-role="Routage simple par méthode et nombre de morceaux"
+          ></div>
+          <h3>Comment l'URL devient une route</h3>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Requête</th>
+                  <th>Chemin</th>
+                  <th><code>$morceaux</code></th>
+                  <th>Action appelée</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="verb v-get">GET</span></td>
+                  <td><code>/produits</code></td>
+                  <td><code>[]</code></td>
+                  <td><code>index()</code></td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-get">GET</span></td>
+                  <td><code>/produits/3</code></td>
+                  <td><code>['3']</code></td>
+                  <td><code>show('3')</code></td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-post">POST</span></td>
+                  <td><code>/produits</code></td>
+                  <td><code>[]</code></td>
+                  <td><code>store()</code></td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-put">PUT</span></td>
+                  <td><code>/produits/3</code></td>
+                  <td><code>['3']</code></td>
+                  <td><code>update('3')</code></td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-delete">DELETE</span></td>
+                  <td><code>/produits/3</code></td>
+                  <td><code>['3']</code></td>
+                  <td><code>destroy('3')</code></td>
+                </tr>
+                <tr>
+                  <td><span class="verb v-get">GET</span></td>
+                  <td><code>/produits/3/avis</code></td>
+                  <td><code>['3','avis']</code></td>
+                  <td>aucune : 404 « Route non trouvée »</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout tip">
+            <span class="label">Volontairement simple</span>
+            <p>
+              Ce routeur ne gère que <code>/produits</code>. Quand tu ajouteras
+              les catégories, tu ajouteras des conditions.
+            </p>
+          </div>
+          <div class="done-row" data-step="routeur"></div>
+        </section>
+
+        <!-- ===================== ETAPE 7 : LANCER ===================== -->
+        <section id="lancer" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-client">Client</span> Étape 7 sur 7
+            </p>
+            <h2>Lancer et tester</h2>
+            <p class="lead">
+              Dans le terminal, à la racine du dossier <code>magasin</code>,
+              démarre le serveur. Puis envoie des requêtes avec ton navigateur
+              ou avec curl.
+            </p>
+          </div>
+          <div
+            class="walk"
+            data-src="src-serve"
+            data-lang="bash"
+            data-file="Terminal"
+            data-layer="client"
+            data-role="Démarrer le serveur intégré de PHP"
+          ></div>
+          <p>
+            Pour la liste des produits, ouvre simplement
+            <code>http://localhost:8000/produits</code> dans ton navigateur.
+            Pour les autres opérations, utilise curl : le navigateur ne sait
+            envoyer que des GET depuis la barre d'adresse.
+          </p>
+          <div
+            class="walk"
+            data-src="src-curl"
+            data-lang="bash"
+            data-file="Terminal"
+            data-layer="client"
+            data-role="Les quatre autres opérations avec curl"
+          ></div>
+          <div class="callout tip">
+            <span class="label">Voir le code de statut</span>
+            <p>
+              Ajoute l'option <code>-i</code> à curl pour afficher la ligne de
+              statut et les en-têtes de la réponse, par exemple
+              <code>curl -i http://localhost:8000/produits/999</code>.
+            </p>
+          </div>
+          <div class="callout warn">
+            <span class="label">Windows</span>
+            <p>
+              Dans le terminal classique de Windows (cmd), le caractère
+              <code>\</code> ne continue pas une ligne et les apostrophes ne
+              protègent pas le JSON. Écris la commande sur une seule ligne et
+              double les guillemets du JSON :
+              <code>-d "{\"nom\":\"Lait\",\"prix\":800,\"stock\":15}"</code>.
+              Dans PowerShell, écris <code>curl.exe</code> et non
+              <code>curl</code>, qui est un alias d'une autre commande. Si les
+              guillemets te bloquent, utilise le simulateur plus bas ou un outil
+              comme Postman.
+            </p>
+          </div>
+          <h3>Les réponses attendues</h3>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Requête</th>
+                  <th>Statut</th>
+                  <th>Corps</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="verb v-get">GET</span> <code>/produits</code>
+                  </td>
+                  <td class="num">200</td>
+                  <td>
+                    <code
+                      >[{"id":1,"nom":"Savon","prix":"500.00","stock":20},
+                      …]</code
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="verb v-post">POST</span> <code>/produits</code>
+                  </td>
+                  <td class="num">201</td>
+                  <td>
+                    <code>{"id":"3","message":"Produit cr\u00e9\u00e9"}</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="verb v-put">PUT</span> <code>/produits/1</code>
+                  </td>
+                  <td class="num">200</td>
+                  <td><code>{"message":"Produit modifi\u00e9"}</code></td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="verb v-delete">DELETE</span>
+                    <code>/produits/1</code>
+                  </td>
+                  <td class="num">200</td>
+                  <td><code>{"message":"Produit supprim\u00e9"}</code></td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="verb v-get">GET</span>
+                    <code>/produits/999</code>
+                  </td>
+                  <td class="num">404</td>
+                  <td><code>{"erreur":"Produit introuvable"}</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout key">
+            <span class="label">Deux surprises normales</span>
+            <p>
+              Le prix arrive sous forme de texte (<code>"500.00"</code>) parce
+              que PDO renvoie les colonnes <code>DECIMAL</code> en chaînes, afin
+              de ne pas perdre de précision. Les accents sortent sous la forme
+              <code>\u00e9</code> parce que <code>json_encode</code> les échappe
+              par défaut. Un client JSON les décode sans rien faire. Le
+              <code>"id":"3"</code> d'une création est lui aussi un texte, car
+              <code>lastInsertId()</code> renvoie toujours une chaîne.
+            </p>
+          </div>
+          <div class="done-row" data-step="lancer"></div>
+        </section>
+
+        <!-- ===================== SIMULATEUR ===================== -->
+        <section id="simulateur">
+          <div class="step-head">
+            <p class="eyebrow">Pratiquer</p>
+            <h2>Simulateur d'API</h2>
+            <p class="lead">
+              Envoie des requêtes à une copie de l'API qui tourne dans ta page.
+              La logique reproduit le code du TP, couche par couche. Regarde le
+              chemin parcouru et l'état de la table après chaque requête.
+            </p>
+          </div>
+          <p class="dbnote">
+            Aucune requête réseau n'est envoyée et PHP n'est pas utilisé ici :
+            c'est une simulation écrite en JavaScript. Les données sont remises
+            à zéro quand tu recharges la page.
+          </p>
+          <div class="sim-wrap">
+            <div class="sim">
+              <div class="sim-col">
+                <div class="panel">
+                  <h3>Requête</h3>
+                  <div
+                    class="presets"
+                    id="presets"
+                    role="group"
+                    aria-label="Scénarios prêts à envoyer"
+                  ></div>
+                  <form
+                    id="sim-form"
+                    autocomplete="off"
+                    style="display: grid; gap: 0.85rem"
+                  >
+                    <div
+                      class="verbs"
+                      role="radiogroup"
+                      aria-label="Méthode HTTP"
+                    >
+                      <input
+                        type="radio"
+                        name="sim-method"
+                        id="vm-get"
+                        value="GET"
+                        checked
+                      /><label class="verb v-get" for="vm-get">GET</label>
+                      <input
+                        type="radio"
+                        name="sim-method"
+                        id="vm-post"
+                        value="POST"
+                      /><label class="verb v-post" for="vm-post">POST</label>
+                      <input
+                        type="radio"
+                        name="sim-method"
+                        id="vm-put"
+                        value="PUT"
+                      /><label class="verb v-put" for="vm-put">PUT</label>
+                      <input
+                        type="radio"
+                        name="sim-method"
+                        id="vm-delete"
+                        value="DELETE"
+                      /><label class="verb v-delete" for="vm-delete"
+                        >DELETE</label
+                      >
+                    </div>
+                    <label class="field" for="sim-url"
+                      ><span>URL</span>
+                      <div class="urlbox">
+                        <span class="base">http://localhost:8000</span
+                        ><input
+                          id="sim-url"
+                          type="text"
+                          value="/produits"
+                          spellcheck="false"
+                        />
+                      </div>
+                    </label>
+                    <label class="field" id="body-field" for="sim-body"
+                      ><span>Corps JSON</span>
+                      <textarea
+                        id="sim-body"
+                        rows="6"
+                        spellcheck="false"
+                      ></textarea>
+                    </label>
+                    <div>
+                      <button class="btn primary" type="submit">
+                        Envoyer la requête
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                <div class="panel">
+                  <h3>Le même appel ailleurs</h3>
+                  <div class="snip-tabs">
+                    <button
+                      class="btn small"
+                      type="button"
+                      id="tab-curl"
+                      aria-pressed="true"
+                    >
+                      curl
+                    </button>
+                    <button
+                      class="btn small"
+                      type="button"
+                      id="tab-fetch"
+                      aria-pressed="false"
+                    >
+                      fetch (JavaScript)
+                    </button>
+                    <button
+                      class="btn small"
+                      type="button"
+                      id="snip-copy"
+                      style="margin-left: auto"
+                    >
+                      Copier
+                    </button>
+                  </div>
+                  <pre class="resp" id="snip" style="max-height: 14rem"></pre>
+                </div>
+              </div>
+              <div class="sim-col">
+                <div class="panel">
+                  <h3>Réponse</h3>
+                  <p class="hint" id="sim-hint"></p>
+                  <div class="resp-head">
+                    <span class="status" id="sim-status">200</span
+                    ><small id="sim-ct"></small>
+                  </div>
+                  <pre class="resp" id="sim-resp"></pre>
+                </div>
+                <div class="panel">
+                  <h3>Chemin parcouru</h3>
+                  <ol class="trace" id="sim-trace"></ol>
+                </div>
+                <div class="panel">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      gap: 0.6rem;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <h3>Table <code>produits</code></h3>
+                    <button class="btn small" type="button" id="sim-reset">
+                      Réinitialiser la base
+                    </button>
+                  </div>
+                  <div class="tablewrap">
+                    <table style="min-width: 20rem">
+                      <thead>
+                        <tr>
+                          <th class="num">id</th>
+                          <th>nom</th>
+                          <th class="num">prix</th>
+                          <th class="num">stock</th>
+                        </tr>
+                      </thead>
+                      <tbody id="sim-db"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== ETAPE 8 : CLIENT JS ===================== -->
+        <section id="client" class="step">
+          <div class="step-head">
+            <p class="eyebrow">
+              <span class="chip l-client">Client</span> Étape 8 · bonus
+            </p>
+            <h2>Consommer l'API avec JavaScript</h2>
+            <p class="lead">
+              Une API prend tout son sens quand un site s'en sert. Voici une
+              petite page qui affiche les produits, en ajoute et en supprime,
+              avec <code>fetch</code>. Enregistre les deux fichiers dans le
+              dossier <code>public</code>.
+            </p>
+          </div>
+          <p>
+            Comme <code>php -S</code> sert les fichiers qui existent,
+            <code>public/app.html</code> s'ouvre sur
+            <code>http://localhost:8000/app.html</code>. La page et l'API ont
+            alors la même origine (même hôte et même port), donc le navigateur
+            ne bloque rien.
+          </p>
+          <div
+            class="walk"
+            data-src="src-html"
+            data-lang="html"
+            data-file="public/app.html"
+            data-layer="client"
+            data-role="La page : un tableau et un formulaire"
+          ></div>
+          <div
+            class="walk"
+            data-src="src-js"
+            data-lang="js"
+            data-file="public/app.js"
+            data-layer="client"
+            data-role="Le script : fetch, DOM et gestion d'erreur"
+          ></div>
+          <div class="callout warn">
+            <span class="label">Pourquoi pas innerHTML</span>
+            <p>
+              Le nom d'un produit vient d'un utilisateur. Si tu l'insères avec
+              <code>innerHTML</code>, un nom contenant du HTML s'exécuterait
+              dans la page (faille XSS). Le code ci-dessus crée les éléments un
+              par un et écrit le texte avec <code>textContent</code>, qui
+              n'interprète jamais le HTML.
+            </p>
+          </div>
+          <div class="callout key">
+            <span class="label">Et si la page est ailleurs ?</span>
+            <p>
+              Une page ouverte depuis un autre port (par exemple Live Server sur
+              le port 5500) appelle une autre origine. Le navigateur refuse
+              alors la réponse sauf si l'API envoie les en-têtes CORS. Le code
+              se trouve dans la section « Aller plus loin ».
+            </p>
+          </div>
+          <div class="done-row" data-step="client"></div>
+        </section>
+
+        <!-- ===================== QUIZ ===================== -->
+        <section id="quiz">
+          <div class="step-head">
+            <p class="eyebrow">Pratiquer</p>
+            <h2>Quiz de vérification</h2>
+            <p class="lead">
+              Neuf questions pour contrôler ce que tu as retenu. Chaque réponse
+              est expliquée.
+            </p>
+          </div>
+          <div class="quiz" id="quiz-box"><p>Le quiz se charge…</p></div>
+        </section>
+
+        <!-- ===================== SOUTENANCE ===================== -->
+        <section id="soutenance">
+          <div class="step-head">
+            <p class="eyebrow">Terminer</p>
+            <h2>Soutenance et travail en binôme</h2>
+            <p class="lead">
+              Même si le TP est simple, le jury peut te demander de justifier
+              tes choix. Voici les questions probables, avec des réponses à
+              reformuler avec tes mots.
+            </p>
+          </div>
+          <div class="qa">
+            <details open>
+              <summary>Pourquoi quatre fichiers au lieu d'un seul ?</summary>
+              <div class="inner">
+                <p>
+                  Pour séparer les responsabilités : le Controller gère le HTTP,
+                  le Service les règles, le Repository la base. Si on change
+                  MySQL pour PostgreSQL, seul le Repository (et la connexion)
+                  change. Le Service et le Controller restent identiques.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>
+                Pourquoi prepare() et execute() au lieu de concaténer ?
+              </summary>
+              <div class="inner">
+                <p>
+                  Pour éviter les injections SQL. Avec une concaténation, ce que
+                  l'utilisateur envoie devient du code SQL. Avec une requête
+                  préparée, les valeurs voyagent séparément et ne sont jamais
+                  interprétées comme du SQL.
+                </p>
+                <figure
+                  class="codeblock"
+                  data-lang="php"
+                  data-title="À ne jamais faire"
+                >
+                  <pre>
+// Si $id vaut "1 OR 1=1", la condition est toujours vraie
+$this-&gt;db-&gt;query("SELECT * FROM produits WHERE id = " . $id);</pre
+                  >
+                </figure>
+                <figure
+                  class="codeblock"
+                  data-lang="php"
+                  data-title="La bonne façon"
+                >
+                  <pre>
+$stmt = $this-&gt;db-&gt;prepare("SELECT * FROM produits WHERE id = ?");
+$stmt-&gt;execute([$id]); // "1 OR 1=1" est traité comme une simple valeur</pre
+                  >
+                </figure>
+              </div>
+            </details>
+            <details>
+              <summary>
+                Pourquoi le Controller ne contient-il pas les règles de
+                validation ?
+              </summary>
+              <div class="inner">
+                <p>
+                  Parce que ces règles peuvent être appelées depuis un autre
+                  endroit : une commande, un test, une autre API. Elles ne
+                  doivent pas dépendre du HTTP.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Pourquoi 201 pour un POST et pas 200 ?</summary>
+              <div class="inner">
+                <p>
+                  200 dit seulement que ça a marché. 201 dit en plus qu'une
+                  nouvelle ressource a été créée. C'est plus précis pour le
+                  client, qui peut alors utiliser l'identifiant renvoyé.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Quelle différence entre 400 et 404 ?</summary>
+              <div class="inner">
+                <p>
+                  400 signifie que la requête est mal formée ou que les données
+                  sont invalides. 404 signifie que la ressource ou la route
+                  demandée n'existe pas. Dans les deux cas, la faute vient du
+                  client.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>Que se passe-t-il si MySQL est arrêté ?</summary>
+              <div class="inner">
+                <p>
+                  La connexion échoue dans <code>Database::connect()</code>, qui
+                  exécute <code>die()</code> avec un message en texte brut. Le
+                  client ne reçoit donc pas du JSON propre. Améliorer cela fait
+                  partie des pistes de la dernière section.
+                </p>
+              </div>
+            </details>
+            <details>
+              <summary>
+                Pourquoi le Service lève-t-il des exceptions au lieu de renvoyer
+                un code HTTP ?
+              </summary>
+              <div class="inner">
+                <p>
+                  Parce que le Service ne doit pas connaître HTTP. Une exception
+                  dit « quelque chose ne va pas » sans imposer la manière de le
+                  dire. Le Controller traduit en 400 ou 404, une commande en
+                  ligne de commande l'afficherait autrement.
+                </p>
+              </div>
+            </details>
+          </div>
+
+          <h3>Travailler en binôme</h3>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Étudiant A</th>
+                  <th>Étudiant B</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>ProduitController.php</code></td>
+                  <td><code>ProduitService.php</code></td>
+                </tr>
+                <tr>
+                  <td><code>public/index.php</code> (routage)</td>
+                  <td><code>ProduitRepository.php</code></td>
+                </tr>
+                <tr>
+                  <td>Tests avec curl</td>
+                  <td><code>Database.php</code> et script SQL</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout key">
+            <span class="label">Règle d'or</span>
+            <p>
+              Avant de coder, mettez-vous d'accord sur deux choses : le format
+              des données échangées et les noms des méthodes que le Controller
+              appellera sur le Service. Ainsi, chacun avance sans attendre
+              l'autre.
+            </p>
+          </div>
+          <figure
+            class="codeblock"
+            data-lang="json"
+            data-title="Format des données échangées"
+          >
+            <pre>{ "nom": "Savon", "prix": 500, "stock": 20 }</pre>
+          </figure>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="Méthodes du Service à respecter"
+          >
+            <pre>
+getAll()
+getById($id)
+create($data)
+update($id, $data)
+delete($id)</pre
+            >
+          </figure>
+        </section>
+
+        <!-- ===================== ALLER PLUS LOIN ===================== -->
+        <section id="loin">
+          <div class="step-head">
+            <p class="eyebrow">Terminer</p>
+            <h2>Aller plus loin</h2>
+            <p class="lead">
+              Quand le CRUD des produits fonctionne, voici des améliorations,
+              des corrections des petits défauts du TP et la suite du projet.
+            </p>
+          </div>
+
+          <h3>1. Renvoyer 404 quand un produit n'existe pas dans update</h3>
+          <p>
+            Crée une exception dédiée. Le Service la lève quand le produit
+            manque, le Controller l'attrape avant l'exception générale.
+          </p>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="src/NotFoundException.php"
+          >
+            <pre>
+&lt;?php
+
+class NotFoundException extends Exception {}</pre
+            >
+          </figure>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="Dans ProduitService::getById"
+          >
+            <pre>
+if (!$produit) {
+    throw new NotFoundException("Produit introuvable");
+}</pre
+            >
+          </figure>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="Dans ProduitController::update"
+          >
+            <pre>
+} catch (NotFoundException $e) {
+    $this-&gt;repondre(['erreur' =&gt; $e-&gt;getMessage()], 404);
+} catch (Exception $e) {
+    $this-&gt;repondre(['erreur' =&gt; $e-&gt;getMessage()], 400);
+}</pre
+            >
+          </figure>
+
+          <h3>2. Vérifier le type des valeurs</h3>
+          <p>
+            Le Service teste que le prix est présent et positif, mais pas que
+            c'est un nombre. Ajoute <code>is_numeric</code> dans
+            <code>valider()</code>.
+          </p>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="Dans ProduitService::valider"
+          >
+            <pre>
+if (!isset($data['prix']) || !is_numeric($data['prix']) || $data['prix'] &lt;= 0) {
+    throw new Exception("Le prix doit être un nombre supérieur à 0");
+}</pre
+            >
+          </figure>
+
+          <h3>3. Refuser les chemins qui ne commencent pas par /produits</h3>
+          <p>
+            Avec le routeur actuel, <code>GET /abc</code> appelle
+            <code>show('abc')</code> et répond « Produit introuvable » au lieu
+            de « Route non trouvée ». Teste le début du chemin avant le routage.
+          </p>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="Dans public/index.php, avant le routage"
+          >
+            <pre>
+if (!str_starts_with($url, '/produits')) {
+    http_response_code(404);
+    header('Content-Type: application/json');
+    echo json_encode(['erreur' =&gt; 'Route non trouvée']);
+    exit;
+}</pre
+            >
+          </figure>
+
+          <h3>4. Autoriser une page située sur une autre origine (CORS)</h3>
+          <p>
+            Ajoute ces lignes tout en haut de <code>index.php</code>, après
+            <code>$methode</code>. Le navigateur envoie d'abord une requête
+            préliminaire <code>OPTIONS</code> pour demander la permission avant
+            un PUT, un DELETE ou un JSON. Le serveur y répond par
+            <code>204</code> sans corps.
+          </p>
+          <figure
+            class="codeblock"
+            data-lang="php"
+            data-title="Dans public/index.php"
+          >
+            <pre>
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+if ($methode === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}</pre
+            >
+          </figure>
+          <p>
+            L'étoile autorise toutes les origines, c'est pratique en
+            développement. En production, écris l'adresse exacte de ton site.
+          </p>
+
+          <h3>5. Le module Catégories</h3>
+          <p>
+            Copie exactement le même modèle : Repository, Service, Controller,
+            puis des conditions dans le routeur. Commence par réfléchir à la
+            table et à son lien avec les produits.
+          </p>
+          <details>
+            <summary>Voir une proposition de schéma SQL</summary>
+            <div class="inner">
+              <figure class="codeblock" data-lang="sql" data-title="Catégories">
+                <pre>
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL UNIQUE
+);
+
+ALTER TABLE produits
+    ADD COLUMN categorie_id INT NULL,
+    ADD CONSTRAINT fk_produits_categorie
+        FOREIGN KEY (categorie_id) REFERENCES categories(id);</pre
+                >
+              </figure>
+              <p>
+                La clé étrangère empêche d'associer un produit à une catégorie
+                qui n'existe pas.
+              </p>
+            </div>
+          </details>
+
+          <h3>6. Les alertes de stock</h3>
+          <p>
+            C'est une requête SQL de plus dans le Repository, avec le même
+            chemin Service puis Controller qu'une lecture.
+          </p>
+          <figure
+            class="codeblock"
+            data-lang="sql"
+            data-title="Produits presque épuisés"
+          >
+            <pre>
+SELECT * FROM produits WHERE stock &lt;= 5 ORDER BY stock ASC;</pre
+            >
+          </figure>
+
+          <h3>7. Le module Ventes</h3>
+          <p>
+            Plus complexe. Une vente doit réduire le stock et enregistrer la
+            vente en même temps, ou ne rien faire du tout. C'est le rôle d'une
+            transaction : <code>beginTransaction()</code>, puis
+            <code>commit()</code> si tout réussit ou <code>rollBack()</code> en
+            cas d'erreur. À faire après les catégories et les alertes.
+          </p>
+        </section>
+
+        <footer>
+          <p>
+            Cours construit à partir du TP débutant « API magasin en PHP natif
+            ». Le code des fichiers PHP est celui du TP, sans modification.
+          </p>
+        </footer>
+      </main>
+    </div>
+    <script type="text/plain" id="src-sql">
+      CREATE DATABASE magasin_db;
+      >>> `CREATE DATABASE` demande à MySQL de créer une base de données, ici nommée `magasin_db`. Une base est un grand classeur qui contiendra nos tables.
+
+      Le `;` termine l'instruction. Sans lui, MySQL attend la suite et ne fait rien.
+
+      Si tu relances le script une deuxième fois, MySQL répond que la base existe déjà. Écrire `CREATE DATABASE IF NOT EXISTS magasin_db;` rend le script relançable.
+      ===
+
+      ===
+      USE magasin_db;
+      >>> `USE` choisit la base de travail. Toutes les commandes qui suivent s'appliquent à `magasin_db`. Sans cette ligne, `CREATE TABLE` ne saurait pas dans quelle base créer la table.
+      ===
+
+      ===
+      CREATE TABLE produits (
+      >>> Début de la création de la table `produits`. Une table est un tableau : une ligne par produit, une colonne par information.
+
+      La parenthèse ouvre la liste des colonnes. Le nom est au pluriel et identique à la ressource de l'URL `/produits`, ce qui rend le projet facile à suivre.
+      ===
+          id INT AUTO_INCREMENT PRIMARY KEY,
+      >>> Colonne `id`. `INT` est un nombre entier. `AUTO_INCREMENT` laisse MySQL numéroter lui-même (1, 2, 3, ...) : on ne choisit jamais l'id à la main.
+
+      `PRIMARY KEY` en fait l'identifiant unique de la ligne. Deux produits ne peuvent pas avoir le même id. C'est la valeur qu'on retrouve dans l'URL `/produits/3`.
+      ===
+          nom VARCHAR(150) NOT NULL,
+      >>> Colonne `nom` : un texte de 150 caractères maximum. `NOT NULL` oblige à fournir une valeur, donc un produit sans nom est refusé par MySQL. Le Service vérifie déjà le nom avant, mais la base reste une deuxième barrière.
+      ===
+          prix DECIMAL(10,2) NOT NULL,
+      >>> Colonne `prix`. `DECIMAL(10,2)` est un nombre à virgule fixe : 10 chiffres au total dont 2 après la virgule (jusqu'à 99 999 999,99).
+
+      On l'utilise pour l'argent. Le type `FLOAT` stocke des valeurs approchées et peut produire de petits écarts d'arrondi.
+      ===
+          stock INT NOT NULL DEFAULT 0
+      >>> Colonne `stock`, un entier. `DEFAULT 0` donne la valeur 0 si l'`INSERT` ne précise pas le stock.
+
+      C'est la dernière colonne, donc il n'y a pas de virgule à la fin de la ligne.
+      ===
+      );
+      >>> La parenthèse ferme la liste des colonnes et le `;` termine l'instruction. La table existe maintenant, vide.
+      ===
+
+      ===
+      INSERT INTO produits (nom, prix, stock) VALUES
+      >>> `INSERT INTO` ajoute des lignes dans la table. Entre parenthèses, on liste les colonnes à remplir. `id` n'y figure pas, car `AUTO_INCREMENT` s'en charge.
+
+      `VALUES` annonce les données : un groupe entre parenthèses par ligne à créer.
+      ===
+      ('Savon', 500, 20),
+      >>> Première ligne : nom, prix, stock, dans l'ordre des colonnes annoncées. Les textes sont entre apostrophes, les nombres non. La virgule finale annonce une deuxième ligne.
+      ===
+      ('Riz 5kg', 3500, 10);
+      >>> Deuxième ligne. Le `;` clôt l'unique instruction `INSERT`. La devise n'est pas stockée : c'est au client de l'afficher.
+    </script>
+
+    <script type="text/plain" id="src-database">
+      <?php
+      >>> Ouvre le code PHP. Tout ce qui est écrit hors des balises PHP est envoyé tel quel au navigateur.
+
+      On ne met pas de balise fermante `?>` dans un fichier 100 % PHP. Un espace ou un retour à la ligne oublié après elle serait envoyé au client et casserait les en-têtes HTTP (erreur « headers already sent »).
+      ===
+
+      ===
+      class Database
+      {
+      >>> Déclare une classe nommée `Database`, c'est-à-dire un modèle qui regroupe du code. Par convention, le nom commence par une majuscule et le fichier porte le même nom (`Database.php`).
+
+      L'accolade ouvre le corps de la classe.
+      ===
+          public static function connect()
+          {
+      >>> `public` : cette méthode peut être appelée depuis n'importe où. `static` : on l'appelle sur la classe elle-même, sans créer d'objet, avec `Database::connect()`.
+
+      `function connect()` donne le nom de la méthode. Elle n'a pas de paramètre : les identifiants sont écrits en dur, ce qui suffit pour un TP.
+      ===
+              try {
+      >>> Début d'un bloc `try`. PHP essaie d'exécuter le code qui suit. Si une exception est levée, il saute directement au bloc `catch`.
+      ===
+                  $pdo = new PDO(
+      >>> `new PDO(...)` crée une connexion à la base. PDO (PHP Data Objects) est l'outil standard de PHP pour parler à une base de données. Le résultat est rangé dans la variable `$pdo` (le `$` marque toutes les variables PHP).
+      ===
+                      'mysql:host=localhost;dbname=magasin_db;charset=utf8mb4',
+      >>> Le DSN (Data Source Name) décrit où et comment se connecter.
+
+      `mysql:` choisit le pilote. `host=localhost` désigne le serveur MySQL, sur ta machine. `dbname=magasin_db` choisit la base (l'équivalent du `USE` de l'étape 1). `charset=utf8mb4` fixe l'encodage et permet les accents. Sans lui, un « é » peut devenir « Ã© ».
+      ===
+                      'root',   // utilisateur MySQL
+      >>> Le nom d'utilisateur MySQL. `root` est l'administrateur par défaut de XAMPP. Tout ce qui suit `//` est un commentaire ignoré par PHP.
+
+      En production, on n'utilise jamais `root` : on crée un utilisateur avec des droits limités à cette base.
+      ===
+                      ''        // mot de passe (vide par défaut sous XAMPP)
+      >>> Le mot de passe. Il est vide par défaut avec XAMPP et WAMP. Sous MAMP, il vaut souvent `root`. C'est le dernier argument, donc pas de virgule.
+      ===
+                  );
+      >>> Ferme l'appel à `new PDO`. Si la connexion échoue (MySQL éteint, mauvais mot de passe, base inconnue), PDO lève une `PDOException`.
+      ===
+                  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      >>> `->` appelle une méthode sur un objet. Ce réglage dit à PDO : en cas d'erreur SQL, lève une exception. `::` donne accès à une constante de classe.
+
+      Sans ce réglage, une requête ratée renverrait `false` en silence et tu chercherais longtemps l'erreur. C'est aussi ce qui permet aux `try/catch` des autres fichiers de fonctionner.
+      ===
+                  return $pdo;
+      >>> Renvoie la connexion à celui qui a appelé `connect()`. `return` termine la méthode.
+      ===
+              } catch (PDOException $e) {
+      >>> Si une `PDOException` a été levée dans le `try`, l'exécution arrive ici. L'objet qui décrit l'erreur est rangé dans `$e`.
+      ===
+                  die('Erreur de connexion : ' . $e->getMessage());
+      >>> `getMessage()` renvoie le texte de l'erreur. Le point `.` colle deux textes ensemble. `die()` affiche le message et arrête tout le script.
+
+      Limite à connaître : ce message est du texte brut, pas du JSON, et il peut révéler des informations techniques. En production, on écrit l'erreur dans un journal et on renvoie une réponse générique.
+      ===
+              }
+          }
+      }
+      >>> Les trois accolades ferment, dans l'ordre : le `catch`, la méthode `connect` et la classe `Database`.
+    </script>
+
+    <script type="text/plain" id="src-repository">
+      <?php
+      >>> Ouverture du code PHP, sans balise fermante, comme dans le fichier précédent.
+      ===
+
+      ===
+      require_once __DIR__ . '/Database.php';
+      >>> `require_once` charge un autre fichier PHP. S'il manque, le script s'arrête avec une erreur fatale. Le `_once` évite de le charger deux fois, ce qui provoquerait « Cannot redeclare class ».
+
+      `__DIR__` est le dossier du fichier courant (`src`). Le chemin reste donc correct quel que soit l'endroit d'où tu lances PHP.
+      ===
+
+      ===
+      class ProduitRepository
+      {
+          private $db;
+      >>> Déclare la classe. `private $db;` crée une propriété, c'est-à-dire une variable qui appartient à l'objet. `private` signifie qu'elle n'est accessible que depuis cette classe.
+
+      Elle contiendra la connexion PDO. Personne d'autre n'a besoin d'y toucher.
+      ===
+
+      ===
+          public function __construct()
+          {
+      >>> `__construct` est le constructeur. PHP l'appelle automatiquement à chaque `new ProduitRepository()`.
+      ===
+              $this->db = Database::connect();
+          }
+      >>> `$this` désigne l'objet en cours. On range dans sa propriété `db` la connexion renvoyée par `Database::connect()`.
+
+      Chaque `new ProduitRepository()` ouvre une connexion MySQL. Ici, c'est une seule fois par requête HTTP, ce qui reste acceptable.
+      ===
+
+      ===
+          // Récupérer tous les produits
+          public function findAll()
+          {
+      >>> Un commentaire, puis la méthode qui lit la liste complète. Elle n'a pas de paramètre.
+      ===
+              $stmt = $this->db->query("SELECT * FROM produits");
+      >>> `query()` exécute directement une requête SQL qui ne contient aucune valeur venue de l'extérieur, donc sans risque d'injection.
+
+      `SELECT *` demande toutes les colonnes. Sans `WHERE`, on obtient toutes les lignes. Le résultat est un objet `PDOStatement`, rangé dans `$stmt` : une sorte de résultat en attente de lecture.
+      ===
+              return $stmt->fetchAll(PDO::FETCH_ASSOC);
+          }
+      >>> `fetchAll` lit toutes les lignes d'un coup. `PDO::FETCH_ASSOC` demande des tableaux associatifs, de la forme `['id' => 1, 'nom' => 'Savon', ...]`. Sans cette option, chaque valeur apparaîtrait deux fois, avec un nom de colonne et avec un numéro.
+
+      Le résultat est un tableau de tableaux. `json_encode` le transformera en tableau JSON d'objets. L'accolade ferme la méthode.
+      ===
+
+      ===
+          // Récupérer un produit par son id
+          public function findById($id)
+          {
+      >>> Méthode qui lit un seul produit. Le paramètre `$id` est la valeur venue de l'URL.
+      ===
+              $stmt = $this->db->prepare("SELECT * FROM produits WHERE id = ?");
+      >>> `prepare()` envoie le modèle de la requête à MySQL avant les valeurs. Le `?` est un emplacement vide (placeholder). `WHERE id = ?` garde uniquement la ligne dont l'id correspond.
+
+      C'est la protection contre les injections SQL : la valeur n'est jamais collée dans le texte de la requête.
+      ===
+              $stmt->execute([$id]);
+      >>> `execute()` fournit les valeurs dans un tableau, dans l'ordre des `?`. PDO les envoie comme des données, jamais comme du code SQL.
+
+      Même si `$id` valait `1 OR 1=1`, MySQL le comparerait comme une simple valeur et ne trouverait aucun produit.
+      ===
+              return $stmt->fetch(PDO::FETCH_ASSOC);
+          }
+      >>> `fetch` (sans `All`) lit une seule ligne. S'il n'y en a aucune, il renvoie `false`. Le Service testera ce `false` pour savoir si le produit existe.
+      ===
+
+      ===
+          // Ajouter un produit
+          public function create($nom, $prix, $stock)
+          {
+      >>> Méthode d'ajout. Elle reçoit trois valeurs déjà validées par le Service. Pas d'`id` : c'est MySQL qui le génère.
+      ===
+              $stmt = $this->db->prepare(
+                  "INSERT INTO produits (nom, prix, stock) VALUES (?, ?, ?)"
+              );
+      >>> Prépare un `INSERT` avec trois emplacements, un par colonne listée. La requête est écrite sur trois lignes pour rester lisible. PHP lit simplement un seul appel à `prepare`.
+      ===
+              $stmt->execute([$nom, $prix, $stock]);
+      >>> Remplace les trois `?` par `$nom`, `$prix` et `$stock`, dans cet ordre. C'est ici que la ligne est réellement créée.
+      ===
+              return $this->db->lastInsertId();
+          }
+      >>> `lastInsertId()` renvoie l'id que `AUTO_INCREMENT` vient de générer pour la dernière insertion faite avec cette connexion.
+
+      Attention : il renvoie un texte (`"3"`) et non un nombre. C'est pour cela que le JSON de création contient `"id":"3"`.
+      ===
+
+      ===
+          // Modifier un produit
+          public function update($id, $nom, $prix, $stock)
+          {
+      >>> Méthode de modification. Elle a quatre paramètres : l'id du produit à changer et ses nouvelles valeurs.
+      ===
+              $stmt = $this->db->prepare(
+                  "UPDATE produits SET nom = ?, prix = ?, stock = ? WHERE id = ?"
+              );
+      >>> `UPDATE ... SET` change les colonnes listées. Il y a quatre `?` : trois pour les valeurs et un pour `WHERE id = ?`.
+
+      Le `WHERE` est indispensable. Sans lui, tous les produits de la table recevraient le même nom, le même prix et le même stock.
+      ===
+              return $stmt->execute([$nom, $prix, $stock, $id]);
+          }
+      >>> L'ordre du tableau suit l'ordre des `?` : nom, prix, stock, puis l'id en dernier, parce que `WHERE id = ?` est la dernière partie de la requête. Se tromper d'ordre est l'erreur la plus fréquente.
+
+      `execute` renvoie `true` si la requête s'est bien passée.
+      ===
+
+      ===
+          // Supprimer un produit
+          public function delete($id)
+          {
+      >>> Méthode de suppression : elle ne reçoit que l'id.
+      ===
+              $stmt = $this->db->prepare("DELETE FROM produits WHERE id = ?");
+              return $stmt->execute([$id]);
+          }
+      }
+      >>> Même mécanique : on prépare un `DELETE` avec un `?`, puis on l'exécute avec l'id. Sans `WHERE`, la table entière serait vidée.
+
+      La dernière accolade ferme la classe `ProduitRepository`.
+    </script>
+
+    <script type="text/plain" id="src-service">
+      <?php
+      >>> Ouverture du code PHP.
+      ===
+
+      ===
+      require_once __DIR__ . '/ProduitRepository.php';
+      >>> Charge le fichier du Repository, dont le Service a besoin. Le Repository charge à son tour `Database.php`, donc toute la chaîne est disponible.
+      ===
+
+      ===
+      class ProduitService
+      {
+          private $repo;
+      >>> Déclare la classe et une propriété privée `$repo`, qui contiendra le Repository.
+
+      Le Service ne connaît ni PDO ni SQL. Il parle uniquement au Repository.
+      ===
+
+      ===
+          public function __construct()
+          {
+              $this->repo = new ProduitRepository();
+          }
+      >>> Le constructeur crée un Repository et le range dans `$repo`. C'est simple pour débuter.
+
+      Plus tard, on pourra recevoir le Repository en paramètre (injection de dépendances). On pourra alors tester le Service avec un faux Repository, sans base de données.
+      ===
+
+      ===
+          public function getAll()
+          {
+              return $this->repo->findAll();
+          }
+      >>> Renvoie tous les produits. Le Service se contente de relayer l'appel : il n'y a aucune règle pour l'instant.
+
+      Cette méthode existe quand même pour que le Controller ne parle qu'au Service. Si demain on veut cacher les produits en rupture, on le fera ici, sans toucher au Controller.
+      ===
+
+      ===
+          public function getById($id)
+          {
+              $produit = $this->repo->findById($id);
+      >>> Demande le produit au Repository. Le résultat est un tableau si le produit existe, ou `false` sinon.
+      ===
+              if (!$produit) {
+      >>> `!` signifie « non ». La condition est vraie quand `$produit` vaut `false` (ou `null`), donc quand rien n'a été trouvé. Un tableau rempli est considéré comme vrai.
+      ===
+                  throw new Exception("Produit introuvable");
+              }
+      >>> `throw` lève une exception : la méthode s'arrête immédiatement et l'erreur remonte jusqu'au `catch` le plus proche, dans le Controller.
+
+      Remarque : le Service signale un problème métier, mais il ne parle pas de 404. Traduire en code HTTP est le travail du Controller.
+      ===
+              return $produit;
+          }
+      >>> Si l'exécution arrive ici, c'est que le produit existe : on le renvoie.
+      ===
+
+      ===
+          public function create($data)
+          {
+              $this->valider($data);
+      >>> `$data` est le tableau reçu du Controller (nom, prix, stock). On le valide d'abord.
+
+      Si une règle échoue, `valider` lève une exception et la ligne suivante n'est jamais exécutée. Rien n'est envoyé à la base.
+      ===
+              return $this->repo->create(
+                  $data['nom'],
+                  $data['prix'],
+                  $data['stock']
+              );
+          }
+      >>> Les données sont valides. On extrait chaque valeur par sa clé (`$data['nom']`) et on les passe une par une au Repository.
+
+      Le Service traduit ainsi un tableau en trois paramètres : le Repository ne dépend pas du format JSON. Le résultat, l'id du nouveau produit, est renvoyé au Controller.
+      ===
+
+      ===
+          public function update($id, $data)
+          {
+              $this->getById($id); // vérifie que le produit existe
+      >>> On appelle `getById` uniquement pour son effet : il lève une exception si le produit n'existe pas. Sa valeur de retour est ignorée.
+
+      Sans cette ligne, un `UPDATE` sur un id inconnu ne modifierait aucune ligne et on répondrait quand même « Produit modifié ».
+      ===
+              $this->valider($data);
+      >>> Contrôle des nouvelles valeurs, avec les mêmes règles que pour la création.
+      ===
+              return $this->repo->update(
+                  $id,
+                  $data['nom'],
+                  $data['prix'],
+                  $data['stock']
+              );
+          }
+      >>> Appelle le Repository. Les arguments suivent l'ordre de sa méthode `update($id, $nom, $prix, $stock)`.
+      ===
+
+      ===
+          public function delete($id)
+          {
+              $this->getById($id);
+              return $this->repo->delete($id);
+          }
+      >>> Même idée : on vérifie d'abord que le produit existe (exception sinon), puis on demande la suppression au Repository.
+      ===
+
+      ===
+          // Vérifie les règles métier
+          private function valider($data)
+          {
+      >>> `private` : cette méthode ne peut être appelée que depuis la classe elle-même. C'est un outil interne.
+
+      Les règles métier sont les règles du magasin, indépendantes de la technique : un prix négatif n'a pas de sens, quelle que soit la base utilisée.
+      ===
+              if (empty($data['nom'])) {
+      >>> `empty()` est vrai si la valeur est absente, `null`, une chaîne vide, `0` ou `"0"`. Si `$data` vaut `null` (JSON illisible), `$data['nom']` ne provoque pas d'erreur dans `empty()`, et on obtient simplement « nom obligatoire ».
+
+      Conséquence amusante : un produit dont le nom serait exactement `"0"` serait refusé.
+      ===
+                  throw new Exception("Le nom est obligatoire");
+              }
+      >>> Si le nom est vide, on lève l'exception avec un message clair. Ce message sera renvoyé au client dans le champ `erreur`.
+      ===
+              if (!isset($data['prix']) || $data['prix'] <= 0) {
+      >>> `isset()` est vrai si la clé existe et n'est pas `null`. `||` signifie « OU ».
+
+      PHP s'arrête au premier test vrai : si le prix est absent, la comparaison `<= 0` n'est pas évaluée. Le prix est refusé s'il est absent ou inférieur ou égal à 0.
+
+      Limite : on ne vérifie pas que c'est un nombre. Voir « Aller plus loin ».
+      ===
+                  throw new Exception("Le prix doit être supérieur à 0");
+              }
+      >>> Exception avec le message de la règle sur le prix.
+      ===
+              if (!isset($data['stock']) || $data['stock'] < 0) {
+      >>> Même schéma pour le stock. Remarque la différence : `< 0` et non `<= 0`. Un stock de 0 est autorisé (produit épuisé), alors qu'un prix de 0 ne l'est pas.
+      ===
+                  throw new Exception("Le stock ne peut pas être négatif");
+              }
+          }
+      }
+      >>> Message de la règle sur le stock. Les deux dernières accolades ferment la méthode `valider` et la classe `ProduitService`.
+    </script>
+
+    <script type="text/plain" id="src-controller">
+      <?php
+      >>> Ouverture du code PHP.
+      ===
+
+      ===
+      require_once __DIR__ . '/ProduitService.php';
+      >>> Charge le Service, le seul fichier dont le Controller a besoin.
+      ===
+
+      ===
+      class ProduitController
+      {
+          private $service;
+      >>> Déclare la classe et une propriété privée qui contiendra le Service.
+      ===
+
+      ===
+          public function __construct()
+          {
+              $this->service = new ProduitService();
+          }
+      >>> Le constructeur crée un Service. Quand `index.php` écrit `new ProduitController()`, toute la chaîne se construit : Controller, Service, Repository, connexion MySQL.
+      ===
+
+      ===
+          // GET /produits
+          public function index()
+          {
+      >>> Le commentaire rappelle la route associée. `index` est le nom habituel de l'action qui liste les éléments.
+      ===
+              $produits = $this->service->getAll();
+              $this->repondre($produits, 200);
+          }
+      >>> On demande la liste au Service, puis on envoie la réponse avec le code 200 (OK).
+
+      Il n'y a pas de `try/catch` : `getAll` ne lève pas d'exception métier. Si MySQL tombait en panne en cours de route, PHP produirait une erreur fatale, donc un statut 500.
+      ===
+
+      ===
+          // GET /produits/{id}
+          public function show($id)
+          {
+              try {
+      >>> `{id}` dans le commentaire désigne une valeur variable. Le paramètre `$id` vient de l'URL. Le `try` protège l'appel au Service, qui peut lever une exception.
+      ===
+                  $produit = $this->service->getById($id);
+                  $this->repondre($produit, 200);
+      >>> Si le produit existe, `getById` le renvoie et on répond 200 avec ce produit en JSON. Si le produit n'existe pas, `getById` lève une exception et ces deux lignes sont abandonnées après la première.
+      ===
+              } catch (Exception $e) {
+                  $this->repondre(['erreur' => $e->getMessage()], 404);
+              }
+          }
+      >>> `catch (Exception $e)` attrape l'exception du Service. On construit un tableau associatif (`=>` relie une clé à sa valeur) qui deviendra `{"erreur":"Produit introuvable"}`, et on répond avec le code 404 (Not Found).
+
+      C'est ici qu'un problème métier se transforme en code HTTP : le rôle du Controller.
+      ===
+
+      ===
+          // POST /produits
+          public function store()
+          {
+              $data = json_decode(file_get_contents('php://input'), true);
+      >>> `php://input` est le flux qui contient le corps brut de la requête, donc le JSON envoyé par le client. `file_get_contents` le lit en entier sous forme de texte.
+
+      `json_decode(..., true)` transforme ce texte en tableau PHP associatif. Le `true` demande un tableau plutôt qu'un objet. Si le JSON est invalide, on obtient `null`, et le Service répondra « Le nom est obligatoire ».
+
+      On n'utilise pas `$_POST`, qui ne contient que les formulaires classiques et jamais le JSON.
+      ===
+              try {
+                  $id = $this->service->create($data);
+      >>> On confie les données au Service. S'il les valide et que le Repository insère la ligne, il renvoie le nouvel id. Sinon, une exception part vers le `catch`.
+      ===
+                  $this->repondre(['id' => $id, 'message' => 'Produit créé'], 201);
+      >>> Réponse de succès avec le code 201 (Created) : une ressource vient d'être créée. Le client reçoit son id, qu'il pourra utiliser dans l'URL `/produits/{id}`.
+      ===
+              } catch (Exception $e) {
+                  $this->repondre(['erreur' => $e->getMessage()], 400);
+              }
+          }
+      >>> Si les données sont invalides, on renvoie le message de l'exception avec le code 400 (Bad Request) : la faute vient du client, pas du serveur.
+      ===
+
+      ===
+          // PUT /produits/{id}
+          public function update($id)
+          {
+              $data = json_decode(file_get_contents('php://input'), true);
+      >>> Même lecture du corps JSON que dans `store`. L'id, lui, vient de l'URL et arrive en paramètre.
+      ===
+              try {
+                  $this->service->update($id, $data);
+                  $this->repondre(['message' => 'Produit modifié'], 200);
+      >>> Le Service vérifie que le produit existe, valide les données et modifie la ligne. En cas de succès, on répond 200.
+      ===
+              } catch (Exception $e) {
+                  $this->repondre(['erreur' => $e->getMessage()], 400);
+              }
+          }
+      >>> Toute exception donne 400, y compris « Produit introuvable ». C'est une petite incohérence avec `destroy`, qui répond 404 : essaie les deux dans le simulateur.
+      ===
+
+      ===
+          // DELETE /produits/{id}
+          public function destroy($id)
+          {
+              try {
+                  $this->service->delete($id);
+                  $this->repondre(['message' => 'Produit supprimé'], 200);
+      >>> Le Service vérifie l'existence puis supprime. En cas de succès, on répond 200 avec un message. Pas de corps à lire : l'URL suffit.
+      ===
+              } catch (Exception $e) {
+                  $this->repondre(['erreur' => $e->getMessage()], 404);
+              }
+          }
+      >>> Ici, l'unique cause d'exception est un produit introuvable, donc 404.
+      ===
+
+      ===
+          // Fonction utilitaire pour renvoyer du JSON
+          private function repondre($data, $code)
+          {
+      >>> Méthode privée utilisée par toutes les actions, pour ne pas répéter les trois mêmes lignes cinq fois.
+      ===
+              http_response_code($code);
+      >>> Fixe le code de statut de la réponse (200, 201, 400, 404...).
+      ===
+              header('Content-Type: application/json');
+      >>> Ajoute l'en-tête qui dit au client que le corps est du JSON. Les en-têtes doivent être envoyés avant le moindre `echo`.
+      ===
+              echo json_encode($data);
+          }
+      }
+      >>> `json_encode` transforme le tableau PHP en texte JSON, et `echo` l'envoie comme corps de la réponse.
+
+      Par défaut, `json_encode` écrit les accents sous la forme `é`. Ce n'est pas un problème pour un client JSON. L'option `JSON_UNESCAPED_UNICODE` donne un texte plus lisible.
+    </script>
+
+    <script type="text/plain" id="src-index">
+      <?php
+      >>> Ouverture du code PHP. Ce fichier est le seul que le serveur exécute directement, tous les autres sont chargés par lui.
+      ===
+
+      ===
+      require_once __DIR__ . '/../src/ProduitController.php';
+      >>> Charge le Controller. `__DIR__` est le dossier `public`, et `/../src` remonte d'un cran avant de descendre dans `src`.
+      ===
+
+      ===
+      // Récupérer la méthode HTTP et l'URL
+      $methode = $_SERVER['REQUEST_METHOD'];
+      >>> `$_SERVER` est un tableau que PHP remplit avec les informations de la requête. `REQUEST_METHOD` contient la méthode : `GET`, `POST`, `PUT` ou `DELETE`.
+      ===
+      $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+      >>> `REQUEST_URI` contient tout ce qui suit le port, par exemple `/produits/3?tri=nom`. `parse_url(..., PHP_URL_PATH)` ne garde que le chemin, `/produits/3`, et ignore la partie après le `?`.
+      ===
+
+      ===
+      // Enlever le préfixe "/produits"
+      $chemin = str_replace('/produits', '', $url);
+      >>> Remplace `/produits` par du vide. `/produits/3` devient `/3`, et `/produits` devient une chaîne vide.
+
+      Limite : cette ligne ne vérifie pas que l'URL commençait par `/produits`. Voir « Aller plus loin ».
+      ===
+      $chemin = trim($chemin, '/');
+      >>> `trim` retire les `/` au début et à la fin : `/3` devient `3`.
+      ===
+      $morceaux = $chemin === '' ? [] : explode('/', $chemin);
+      >>> `===` compare strictement. `? :` est l'opérateur ternaire, un `if/else` sur une ligne : si le chemin est vide, `$morceaux` est un tableau vide, sinon `explode('/', ...)` coupe le chemin à chaque `/`.
+
+      Le test est nécessaire, car `explode('/', '')` renverrait un tableau avec un élément vide, et `count` donnerait 1 au lieu de 0.
+      ===
+
+      ===
+      $controller = new ProduitController();
+      >>> Crée le Controller. Cela crée aussi le Service, le Repository et la connexion MySQL. PHP ne garde rien entre deux requêtes, donc tout est reconstruit à chaque fois.
+      ===
+
+      ===
+      // Routage simple
+      if ($methode === 'GET' && count($morceaux) === 0) {
+          $controller->index();
+      }
+      >>> `&&` signifie « ET ». `count($morceaux)` donne le nombre d'éléments. GET sans morceau, c'est `/produits` : on affiche la liste.
+      ===
+      elseif ($methode === 'GET' && count($morceaux) === 1) {
+          $controller->show($morceaux[0]);
+      }
+      >>> GET avec un morceau, c'est `/produits/3`. `$morceaux[0]` est le premier élément (les tableaux commencent à 0) : l'id, sous forme de texte.
+      ===
+      elseif ($methode === 'POST' && count($morceaux) === 0) {
+          $controller->store();
+      }
+      >>> POST sans morceau : création. Les données sont dans le corps de la requête, donc rien à passer en argument.
+      ===
+      elseif ($methode === 'PUT' && count($morceaux) === 1) {
+          $controller->update($morceaux[0]);
+      }
+      >>> PUT avec un morceau : modification du produit dont l'id est dans l'URL.
+      ===
+      elseif ($methode === 'DELETE' && count($morceaux) === 1) {
+          $controller->destroy($morceaux[0]);
+      }
+      >>> DELETE avec un morceau : suppression du produit dont l'id est dans l'URL.
+      ===
+      else {
+          http_response_code(404);
+          echo json_encode(['erreur' => 'Route non trouvée']);
+      }
+      >>> Aucune condition ne correspond (par exemple `GET /produits/3/avis`) : on répond 404 avec un message JSON.
+
+      Petit oubli du TP : cette réponse n'envoie pas l'en-tête `Content-Type: application/json`, contrairement à `repondre()`. Le client reçoit donc du JSON annoncé comme du HTML.
+    </script>
+
+    <script type="text/plain" id="src-serve">
+      php -S localhost:8000 -t public
+      >>> `php` lance l'interpréteur PHP. `-S localhost:8000` démarre le serveur web intégré, à l'adresse `localhost`, sur le port 8000. Change le port si 8000 est déjà utilisé.
+
+      `-t public` fixe la racine du site sur le dossier `public` : seul son contenu est accessible depuis le navigateur. Le dossier `src` reste donc inaccessible directement, ce qui est une protection.
+
+      Quand l'URL ne correspond à aucun fichier existant (comme `/produits`), le serveur intégré exécute `public/index.php`. C'est ce qui envoie toutes les requêtes à ton routeur.
+
+      Garde ce terminal ouvert : `Ctrl+C` arrête le serveur et les erreurs PHP s'y affichent.
+    </script>
+
+    <script type="text/plain" id="src-curl">
+      curl -X POST http://localhost:8000/produits \
+      >>> **Ajouter un produit.** `curl` envoie une requête HTTP depuis le terminal. `-X POST` choisit la méthode, puis vient l'URL complète.
+
+      Le `\` en fin de ligne dit au shell que la commande continue sur la ligne suivante (macOS, Linux, Git Bash).
+      ===
+        -H "Content-Type: application/json" \
+      >>> `-H` ajoute un en-tête HTTP. Ici, on annonce que le corps est du JSON. Notre Controller lit `php://input` dans tous les cas, mais un bon client déclare toujours le type de ce qu'il envoie.
+      ===
+        -d '{"nom":"Lait","prix":800,"stock":15}'
+      >>> `-d` fournit le corps de la requête (data). Les apostrophes protègent le JSON de l'interprétation par le shell, pour que les guillemets doubles arrivent intacts.
+
+      Le JSON contient nom, prix et stock, exactement ce que `valider()` attend. La réponse doit être `{"id":"3","message":"Produit créé"}` avec le statut 201.
+      ===
+
+      ===
+      curl -X PUT http://localhost:8000/produits/1 \
+      >>> **Modifier un produit.** Même principe avec la méthode PUT. L'id du produit à modifier se trouve dans l'URL, pas dans le JSON.
+      ===
+        -H "Content-Type: application/json" \
+      >>> Même en-tête que pour l'ajout.
+      ===
+        -d '{"nom":"Savon modifié","prix":600,"stock":18}'
+      >>> On renvoie tous les champs, car `valider()` exige nom, prix et stock. PUT remplace la ressource en entier.
+      ===
+
+      ===
+      curl -X DELETE http://localhost:8000/produits/1
+      >>> **Supprimer un produit.** Il n'y a ni corps ni en-tête à ajouter : la méthode DELETE et l'URL suffisent à désigner le produit à retirer.
+    </script>
+
+    <script type="text/plain" id="src-html">
+      <!DOCTYPE html>
+      >>> Indique au navigateur que la page est du HTML5. Sans cette ligne, il passe en mode « quirks » et se comporte comme les vieux navigateurs.
+      ===
+      <html lang="fr">
+      >>> Ouvre le document. `lang="fr"` déclare la langue : utile aux lecteurs d'écran, au correcteur orthographique et à la traduction automatique.
+      ===
+      <head>
+          <meta charset="utf-8">
+          <title>Magasin</title>
+      </head>
+      >>> Le `head` contient les informations sur la page, pas son contenu visible. `charset="utf-8"` assure que les accents s'affichent bien. `title` est le texte de l'onglet du navigateur.
+      ===
+      <body>
+          <h1>Produits</h1>
+      >>> Le `body` contient ce qui s'affiche. `h1` est le titre principal de la page. Il n'y en a qu'un par page.
+      ===
+          <p id="message"></p>
+      >>> Un paragraphe vide, où le script affichera les retours de l'API (succès ou erreur). L'attribut `id` permet au script de le retrouver avec `getElementById`.
+      ===
+          <table>
+              <tbody id="liste"></tbody>
+          </table>
+      >>> Un tableau dont le corps est vide. Le script y ajoutera une ligne `tr` par produit. On donne l'`id` au `tbody`, car c'est lui qui contient les lignes.
+      ===
+          <form id="formulaire">
+      >>> Le formulaire d'ajout. Son `id` permettra au script d'écouter l'événement `submit`.
+      ===
+              <input id="nom" placeholder="Nom" required>
+      >>> Champ texte pour le nom. `placeholder` affiche une indication grisée. `required` empêche l'envoi tant que le champ est vide.
+      ===
+              <input id="prix" type="number" step="0.01" placeholder="Prix" required>
+      >>> `type="number"` n'accepte que des nombres. `step="0.01"` autorise deux décimales. Même avec ce type, `value` reste un texte : le script devra le convertir.
+      ===
+              <input id="stock" type="number" placeholder="Stock" required>
+      >>> Champ numérique pour le stock, entier par défaut.
+      ===
+              <button>Ajouter</button>
+          </form>
+      >>> Dans un formulaire, un bouton sans `type` est un bouton d'envoi. Un clic déclenche l'événement `submit`, que le script interceptera.
+      ===
+          <script src="app.js"><\/script>
+      </body>
+      </html>
+      >>> Charge le script en fin de `body`, pour que les éléments ci-dessus existent déjà quand il s'exécute. Le serveur de PHP envoie `app.js` tel quel, puisque le fichier existe dans `public`.
+    </script>
+
+    <script type="text/plain" id="src-js">
+      const API = '/produits';
+      >>> `const` déclare une constante : l'adresse de l'API. L'URL est relative (sans `http://localhost:8000`) : le navigateur utilise l'hôte et le port de la page, ce qui évite tout souci de CORS.
+      ===
+      const message = document.getElementById('message');
+      >>> Retrouve le paragraphe `id="message"` dans la page et le range dans une constante, pour l'utiliser plus bas.
+      ===
+
+      ===
+      async function chargerProduits() {
+      >>> `async` marque une fonction qui peut attendre des résultats sans bloquer la page. Elle permet d'utiliser `await` à l'intérieur.
+      ===
+          const reponse = await fetch(API);
+      >>> `fetch(API)` envoie une requête GET à `/produits`. `await` met la fonction en pause jusqu'à l'arrivée de la réponse. `reponse` est un objet qui décrit la réponse (statut, en-têtes, corps).
+      ===
+          const produits = await reponse.json();
+          afficher(produits);
+      }
+      >>> `reponse.json()` lit le corps et le décode en tableau JavaScript. C'est aussi une opération asynchrone, donc `await`. Le tableau est ensuite passé à la fonction `afficher`.
+      ===
+
+      ===
+      function afficher(produits) {
+          const corps = document.getElementById('liste');
+      >>> Fonction qui dessine le tableau. On retrouve d'abord le `tbody`.
+      ===
+          corps.replaceChildren();
+      >>> Supprime toutes les lignes actuelles. Sans cela, chaque rechargement ajouterait les produits une deuxième fois.
+      ===
+          for (const p of produits) {
+              const ligne = document.createElement('tr');
+      >>> Boucle sur chaque produit `p`. Pour chacun, on crée une ligne de tableau `tr`, pas encore visible dans la page.
+      ===
+              for (const valeur of [p.nom, p.prix, p.stock]) {
+                  const cellule = document.createElement('td');
+                  cellule.textContent = valeur;
+                  ligne.append(cellule);
+              }
+      >>> Pour chacune des trois valeurs, on crée une cellule `td`, on y écrit le texte et on l'ajoute à la ligne.
+
+      `textContent` écrit du texte brut, sans jamais interpréter de HTML : un nom piégé ne peut pas s'exécuter.
+      ===
+              const actions = document.createElement('td');
+              const bouton = document.createElement('button');
+              bouton.textContent = 'Supprimer';
+      >>> Une dernière cellule contient un bouton « Supprimer ».
+      ===
+              bouton.addEventListener('click', () => supprimer(p.id));
+      >>> `addEventListener` branche une réaction au clic. La fonction fléchée `() => supprimer(p.id)` est appelée à chaque clic, avec l'id du produit de cette ligne.
+      ===
+              actions.append(bouton);
+              ligne.append(actions);
+              corps.append(ligne);
+          }
+      }
+      >>> On assemble de l'intérieur vers l'extérieur : le bouton dans sa cellule, la cellule dans la ligne, la ligne dans le tableau. La ligne devient visible à cet instant. L'accolade du bas ferme la boucle, puis la fonction.
+      ===
+
+      ===
+      async function supprimer(id) {
+          await fetch(`${API}/${id}`, { method: 'DELETE' });
+      >>> Les accents graves créent un gabarit de texte : `${API}/${id}` insère les variables et donne `/produits/3`. Le deuxième argument de `fetch` est un objet d'options : `method: 'DELETE'` choisit le verbe.
+      ===
+          chargerProduits();
+      }
+      >>> Après la suppression, on recharge la liste pour que le tableau reflète la base.
+      ===
+
+      ===
+      document.getElementById('formulaire').addEventListener('submit', async (evenement) => {
+      >>> Réagit à l'envoi du formulaire. La fonction reçoit un objet `evenement` qui décrit ce qui vient de se passer. Elle est `async` parce qu'elle utilise `await`.
+      ===
+          evenement.preventDefault();
+      >>> Annule le comportement par défaut du navigateur, qui rechargerait la page en envoyant le formulaire de façon classique. C'est notre code qui s'en occupe.
+      ===
+          const reponse = await fetch(API, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+      >>> Envoie une requête POST à `/produits`. L'objet d'options précise la méthode, puis les en-têtes : on déclare que le corps est du JSON.
+      ===
+              body: JSON.stringify({
+                  nom: document.getElementById('nom').value,
+                  prix: Number(document.getElementById('prix').value),
+                  stock: Number(document.getElementById('stock').value)
+              })
+          });
+      >>> `body` est le corps de la requête. `JSON.stringify` transforme l'objet JavaScript en texte JSON. `.value` lit ce que l'utilisateur a saisi.
+
+      `Number(...)` convertit le texte en nombre : sans cela, l'API recevrait `"800"` (un texte) au lieu de `800`.
+      ===
+          const resultat = await reponse.json();
+      >>> Lit le corps de la réponse. Que ce soit un succès (`{"id":..., "message":...}`) ou une erreur (`{"erreur":...}`), c'est du JSON.
+      ===
+          message.textContent = reponse.ok ? resultat.message : resultat.erreur;
+      >>> `reponse.ok` est vrai pour les statuts 200 à 299. Avec le ternaire, on affiche `resultat.message` en cas de succès et `resultat.erreur` sinon. `textContent` est sûr contre l'injection de HTML.
+      ===
+          if (reponse.ok) {
+              evenement.target.reset();
+              chargerProduits();
+          }
+      });
+      >>> Si l'ajout a réussi, `evenement.target` (le formulaire) est vidé avec `reset()` et la liste est rechargée. Les `});` ferment le `if`, la fonction et l'appel à `addEventListener`.
+      ===
+
+      ===
+      chargerProduits();
+      >>> Appelée une fois au chargement de la page, cette ligne remplit le tableau avec les produits existants.
+
+      Piste d'amélioration : si le serveur est arrêté, `fetch` échoue avec une erreur réseau que ce code ne gère pas encore. Un `try/catch` autour de l'appel permettrait d'afficher un message.
+    </script>
+    <script>
+      (function () {
+        "use strict";
+
+        /* ---------- Utilitaires ---------- */
+        const $ = (s, r) => (r || document).querySelector(s);
+        const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+        const esc = (s) =>
+          String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        const inline = (s) =>
+          esc(s)
+            .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+            .replace(/`([^`]+)`/g, "<code>$1</code>");
+
+        function copyText(text, btn) {
+          const original = btn.dataset.label || btn.textContent;
+          btn.dataset.label = original;
+          const ok = () => {
+            btn.textContent = "Copié";
+            setTimeout(() => {
+              btn.textContent = btn.dataset.label;
+            }, 1400);
+          };
+          const fallback = () => {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+              document.execCommand("copy");
+              ok();
+            } catch (e) {
+              btn.textContent = "Copie manuelle";
+            }
+            ta.remove();
+          };
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText)
+              navigator.clipboard.writeText(text).then(ok, fallback);
+            else fallback();
+          } catch (e) {
+            fallback();
+          }
+        }
+
+        /* ---------- Coloration syntaxique ---------- */
+        const NO = /(?!)/;
+        const rx = (flags, ...parts) =>
+          new RegExp(
+            parts.map((p) => "(" + p.source + ")").join("|"),
+            "g" + flags,
+          );
+        const STR2 = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/;
+        const NUM = /\b\d+(?:\.\d+)?\b/;
+        const CLS = ["com", "str", "var", "kw", "num", "fn"];
+        const LANGS = {
+          php: {
+            cls: CLS,
+            re: rx(
+              "",
+              /\/\/.*/,
+              STR2,
+              /\$\w+/,
+              /<\?php|\b(?:class|function|public|private|static|return|new|try|catch|if|elseif|else|throw|require_once|die|echo|extends)\b/,
+              NUM,
+              /\b[A-Za-z_]\w*(?=\()/,
+            ),
+          },
+          sql: {
+            cls: CLS,
+            re: rx(
+              "i",
+              /--.*/,
+              /'(?:[^'\\]|\\.)*'/,
+              NO,
+              /\b(?:CREATE|DATABASE|USE|TABLE|INT|AUTO_INCREMENT|PRIMARY|KEY|VARCHAR|DECIMAL|NOT|NULL|DEFAULT|INSERT|INTO|VALUES|SELECT|FROM|WHERE|UPDATE|SET|DELETE|IF|EXISTS|ALTER|ADD|COLUMN|CONSTRAINT|FOREIGN|REFERENCES|UNIQUE|ORDER|BY|ASC|DESC|AND|OR)\b/,
+              NUM,
+              NO,
+            ),
+          },
+          js: {
+            cls: CLS,
+            re: rx(
+              "",
+              /\/\/.*/,
+              /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`/,
+              NO,
+              /\b(?:const|let|var|function|async|await|return|if|else|for|of|new|true|false|null)\b/,
+              NUM,
+              /\b[A-Za-z_$][\w$]*(?=\()/,
+            ),
+          },
+          html: {
+            cls: CLS,
+            re: rx(
+              "",
+              new RegExp("<" + "!--.*?--" + ">"),
+              /"[^"]*"/,
+              /\b[a-zA-Z-]+(?==)/,
+              /<\/?[a-zA-Z!][\w-]*|\/?>/,
+              NO,
+              NO,
+            ),
+          },
+          bash: {
+            cls: CLS,
+            re: rx(
+              "",
+              /#.*/,
+              /"(?:[^"\\]|\\.)*"|'[^']*'/,
+              NO,
+              /\b(?:curl|php|mkdir)\b/,
+              NO,
+              /\s-{1,2}[A-Za-z][\w-]*/,
+            ),
+          },
+          json: {
+            cls: ["var", "str", "var", "kw", "num", "fn"],
+            re: rx(
+              "",
+              /"(?:[^"\\]|\\.)*"(?=\s*:)/,
+              /"(?:[^"\\]|\\.)*"/,
+              NO,
+              /\b(?:true|false|null)\b/,
+              /-?\b\d+(?:\.\d+)?\b/,
+              NO,
+            ),
+          },
+        };
+        function highlight(line, lang) {
+          const L = LANGS[lang];
+          if (!L) return esc(line);
+          L.re.lastIndex = 0;
+          let out = "",
+            last = 0,
+            m;
+          while ((m = L.re.exec(line))) {
+            if (m[0] === "") {
+              L.re.lastIndex++;
+              continue;
+            }
+            out += esc(line.slice(last, m.index));
+            let g = 1;
+            while (g < m.length && m[g] === undefined) g++;
+            out +=
+              '<span class="s-' + L.cls[g - 1] + '">' + esc(m[0]) + "</span>";
+            last = m.index + m[0].length;
+          }
+          return out + esc(line.slice(last));
+        }
+
+        /* ---------- Parcours ligne par ligne ---------- */
+        const LAYER_NAMES = {
+          route: "Routeur",
+          ctrl: "Controller",
+          serv: "Service",
+          repo: "Repository",
+          db: "Base",
+          client: "Client",
+        };
+
+        function parseWalk(text) {
+          const lines = text
+            .replace(/\r/g, "")
+            .replace(/^\n+|\n+$/g, "")
+            .split("\n");
+          const rows = [];
+          let cur = { code: [], note: [], inNote: false };
+          const flush = () => {
+            if (cur.code.length || cur.note.length) rows.push(cur);
+            cur = { code: [], note: [], inNote: false };
+          };
+          for (const ln of lines) {
+            if (ln === "===") {
+              flush();
+              continue;
+            }
+            if (!cur.inNote && ln.startsWith(">>>")) {
+              cur.inNote = true;
+              cur.note.push(ln.slice(3).trim());
+              continue;
+            }
+            if (cur.inNote) cur.note.push(ln);
+            else cur.code.push(ln);
+          }
+          flush();
+          return rows;
+        }
+        function fmtNote(lines) {
+          return lines
+            .join("\n")
+            .split(/\n\s*\n/)
+            .filter((p) => p.trim())
+            .map((p) => "<p>" + inline(p.replace(/\n/g, " ")) + "</p>")
+            .join("");
+        }
+        function renderWalk(el) {
+          const srcEl = document.getElementById(el.dataset.src);
+          if (!srcEl) return;
+          const text = srcEl.textContent.replace(
+            /<\\\/script/g,
+            "</scr" + "ipt",
+          );
+          const lang = el.dataset.lang;
+          const rows = parseWalk(text);
+          let n = 1;
+          const full = [];
+          const body = rows
+            .map((r) => {
+              const spacer =
+                r.note.length === 0 && r.code.every((l) => l === "");
+              const lines = r.code
+                .map((l) => {
+                  full.push(l);
+                  return (
+                    '<div class="cl"><span class="n">' +
+                    n++ +
+                    '</span><span class="t">' +
+                    highlight(l, lang) +
+                    "</span></div>"
+                  );
+                })
+                .join("");
+              return (
+                '<div class="row' +
+                (spacer ? " spacer" : "") +
+                '"><div class="code">' +
+                lines +
+                '</div><div class="note">' +
+                (spacer ? "" : fmtNote(r.note)) +
+                "</div></div>"
+              );
+            })
+            .join("");
+          const layer = el.dataset.layer;
+          el.innerHTML =
+            '<div class="walk-head"><span class="chip l-' +
+            layer +
+            '">' +
+            (LAYER_NAMES[layer] || layer) +
+            "</span>" +
+            '<span class="file">' +
+            esc(el.dataset.file) +
+            "</span>" +
+            '<span class="role">' +
+            esc(el.dataset.role) +
+            "</span>" +
+            '<span class="tools"><button type="button" class="btn small" data-act="only">Masquer les explications</button>' +
+            '<button type="button" class="btn small" data-act="copy">Copier le code</button></span></div>' +
+            body;
+          const code = full.join("\n");
+          $('[data-act="copy"]', el).addEventListener("click", (e) =>
+            copyText(code, e.currentTarget),
+          );
+          $('[data-act="only"]', el).addEventListener("click", (e) => {
+            const only = el.classList.toggle("code-only");
+            e.currentTarget.textContent = only
+              ? "Afficher les explications"
+              : "Masquer les explications";
+          });
+        }
+        $$(".walk").forEach(renderWalk);
+
+        /* ---------- Blocs de code simples ---------- */
+        $$(".codeblock").forEach((fig) => {
+          const pre = $("pre", fig);
+          const lang = fig.dataset.lang || "txt";
+          const raw = pre.textContent;
+          pre.innerHTML = raw
+            .split("\n")
+            .map((l) => highlight(l, lang))
+            .join("\n");
+          const bar = document.createElement("div");
+          bar.className = "codeblock-bar";
+          bar.innerHTML =
+            "<span>" +
+            esc(fig.dataset.title || lang) +
+            '</span><button type="button" class="btn small">Copier</button>';
+          fig.insertBefore(bar, pre);
+          $("button", bar).addEventListener("click", (e) =>
+            copyText(raw, e.currentTarget),
+          );
+        });
+
+        /* ---------- Navigation, progression, suivi de lecture ---------- */
+        const STEPS = [
+          "sql",
+          "database",
+          "repository",
+          "service",
+          "controller",
+          "routeur",
+          "lancer",
+          "client",
+        ];
+        const STORE_KEY = "atelier-api-rest";
+        let done = [];
+        try {
+          const s = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+          if (Array.isArray(s)) done = s.filter((x) => STEPS.includes(x));
+        } catch (e) {
+          done = [];
+        }
+        function persist() {
+          try {
+            localStorage.setItem(STORE_KEY, JSON.stringify(done));
+          } catch (e) {
+            /* stockage indisponible */
+          }
+        }
+        function refreshProgress() {
+          STEPS.forEach((id) => {
+            const a = $('.nav a[data-step="' + id + '"]');
+            if (a) a.classList.toggle("done", done.includes(id));
+          });
+          $$(".done-row button").forEach((b) => {
+            const on = done.includes(b.dataset.step);
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+            b.textContent = on
+              ? "Étape terminée"
+              : "Marquer l'étape comme terminée";
+          });
+          const bar = $("#progress-bar"),
+            txt = $("#progress-text");
+          if (bar)
+            bar.style.width =
+              Math.round((done.length / STEPS.length) * 100) + "%";
+          if (txt)
+            txt.textContent =
+              done.length + " / " + STEPS.length + " étapes terminées";
+        }
+        $$(".done-row").forEach((row) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "btn";
+          b.dataset.step = row.dataset.step;
+          b.addEventListener("click", () => {
+            const id = row.dataset.step;
+            done = done.includes(id)
+              ? done.filter((x) => x !== id)
+              : done.concat(id);
+            persist();
+            refreshProgress();
+          });
+          row.appendChild(b);
+        });
+        refreshProgress();
+
+        const navLinks = $$('.nav a[href^="#"]:not(.brand)');
+        const linkById = new Map(
+          navLinks.map((a) => [a.getAttribute("href").slice(1), a]),
+        );
+        const navEl = $(".nav");
+        function setActive(id) {
+          const a = linkById.get(id);
+          if (!a) return;
+          navLinks.forEach((x) => x.removeAttribute("aria-current"));
+          a.setAttribute("aria-current", "true");
+          if (
+            navEl.scrollWidth > navEl.clientWidth &&
+            getComputedStyle(navEl).flexDirection === "row"
+          ) {
+            navEl.scrollTo({
+              left: a.offsetLeft - navEl.clientWidth / 2 + a.offsetWidth / 2,
+              behavior: "smooth",
+            });
+          }
+        }
+        if ("IntersectionObserver" in window) {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((en) => {
+                if (en.isIntersecting) setActive(en.target.id);
+              });
+            },
+            { rootMargin: "-20% 0px -70% 0px" },
+          );
+          $$("main section[id], main header[id]").forEach((s) => io.observe(s));
+        }
+
+        /* ---------- Simulateur d'API (reproduit la logique du TP) ---------- */
+        const SEED = () => [
+          { id: 1, nom: "Savon", prix: "500.00", stock: 20 },
+          { id: 2, nom: "Riz 5kg", prix: "3500.00", stock: 10 },
+        ];
+        let rows = SEED();
+        let nextId = 3;
+        class PhpError extends Error {}
+        const q = (v) => JSON.stringify(v);
+        const isNum = (v) =>
+          typeof v === "number" ||
+          (typeof v === "string" && v.trim() !== "" && !isNaN(Number(v)));
+        const phpEmpty = (v) =>
+          v === undefined ||
+          v === null ||
+          v === "" ||
+          v === 0 ||
+          v === "0" ||
+          v === false ||
+          (Array.isArray(v) && v.length === 0);
+        const isset = (v) => v !== undefined && v !== null;
+        const STATUS = {
+          200: "OK",
+          201: "Created",
+          400: "Bad Request",
+          404: "Not Found",
+        };
+
+        function dbCheck(nom, prix, stock) {
+          if (typeof nom === "object" && nom !== null)
+            return "Erreur SQL : valeur invalide pour la colonne nom";
+          if (String(nom).length > 150)
+            return "Erreur SQL : Data too long for column 'nom' at row 1";
+          if (!isNum(prix))
+            return "Erreur SQL : valeur non numérique pour la colonne prix";
+          if (!isNum(stock))
+            return "Erreur SQL : valeur non numérique pour la colonne stock";
+          if (Math.abs(Number(prix)) >= 1e8)
+            return "Erreur SQL : Out of range value for column 'prix' at row 1";
+          return null;
+        }
+
+        function handle(method, rawUrl, bodyText) {
+          const trace = [];
+          const T = (layer, text, sql) => trace.push({ layer, text, sql });
+          let path;
+          try {
+            path = new URL(
+              (rawUrl || "").trim() || "/",
+              "http://localhost:8000",
+            ).pathname;
+          } catch (e) {
+            path = "/";
+          }
+
+          const respond = (status, body, ct) => {
+            T(
+              "ctrl",
+              "repondre(…, " +
+                status +
+                ") : http_response_code puis json_encode",
+            );
+            return { status, body, ct: ct !== false, trace };
+          };
+          const fail = (e, code) => {
+            if (!(e instanceof PhpError)) throw e;
+            T(
+              "ctrl",
+              "catch (Exception $e) : message « " +
+                e.message +
+                " » traduit en code " +
+                code,
+            );
+            return respond(code, { erreur: e.message });
+          };
+          const readBody = () => {
+            T("ctrl", 'json_decode(file_get_contents("php://input"), true)');
+            try {
+              return JSON.parse(bodyText);
+            } catch (e) {
+              T("ctrl", "JSON illisible : json_decode renvoie null");
+              return null;
+            }
+          };
+
+          const repo = {
+            findAll() {
+              T(
+                "repo",
+                "findAll() exécute la requête",
+                "SELECT * FROM produits",
+              );
+              T("db", rows.length + " ligne(s) renvoyée(s)");
+              return rows.map((r) => Object.assign({}, r));
+            },
+            findById(id) {
+              T(
+                "repo",
+                "findById(" + q(id) + ") prépare puis exécute",
+                "SELECT * FROM produits WHERE id = ?   -- [" + q(id) + "]",
+              );
+              const r = /^\d+$/.test(String(id))
+                ? rows.find((x) => x.id === Number(id))
+                : undefined;
+              T(
+                "db",
+                r ? "1 ligne trouvée" : "0 ligne : fetch() renvoie false",
+              );
+              return r ? Object.assign({}, r) : false;
+            },
+            create(nom, prix, stock) {
+              T(
+                "repo",
+                "create() prépare puis exécute",
+                "INSERT INTO produits (nom, prix, stock) VALUES (?, ?, ?)   -- " +
+                  q([nom, prix, stock]),
+              );
+              const err = dbCheck(nom, prix, stock);
+              if (err) {
+                T(
+                  "db",
+                  "MySQL refuse la valeur (mode strict) : PDOException, qui est une Exception",
+                );
+                throw new PhpError(err);
+              }
+              const row = {
+                id: nextId++,
+                nom: String(nom),
+                prix: Number(prix).toFixed(2),
+                stock: Math.round(Number(stock)),
+              };
+              rows.push(row);
+              T(
+                "db",
+                "1 ligne insérée, AUTO_INCREMENT attribue id = " + row.id,
+              );
+              T("repo", 'lastInsertId() renvoie "' + row.id + '", un texte');
+              return String(row.id);
+            },
+            update(id, nom, prix, stock) {
+              T(
+                "repo",
+                "update() prépare puis exécute",
+                "UPDATE produits SET nom = ?, prix = ?, stock = ? WHERE id = ?   -- " +
+                  q([nom, prix, stock, id]),
+              );
+              const err = dbCheck(nom, prix, stock);
+              if (err) {
+                T(
+                  "db",
+                  "MySQL refuse la valeur (mode strict) : PDOException, qui est une Exception",
+                );
+                throw new PhpError(err);
+              }
+              const r = rows.find((x) => x.id === Number(id));
+              r.nom = String(nom);
+              r.prix = Number(prix).toFixed(2);
+              r.stock = Math.round(Number(stock));
+              T("db", "1 ligne modifiée");
+              return true;
+            },
+            remove(id) {
+              T(
+                "repo",
+                "delete() prépare puis exécute",
+                "DELETE FROM produits WHERE id = ?   -- [" + q(id) + "]",
+              );
+              rows = rows.filter((x) => x.id !== Number(id));
+              T("db", "1 ligne supprimée");
+              return true;
+            },
+          };
+
+          const valider = (data) => {
+            const o =
+              data && typeof data === "object" && !Array.isArray(data)
+                ? data
+                : {};
+            T("serv", "valider($data) contrôle le nom, le prix et le stock");
+            if (phpEmpty(o.nom)) {
+              T("serv", 'empty($data["nom"]) est vrai : throw new Exception');
+              throw new PhpError("Le nom est obligatoire");
+            }
+            if (!isset(o.prix) || (isNum(o.prix) && Number(o.prix) <= 0)) {
+              T("serv", "Règle du prix non respectée : throw new Exception");
+              throw new PhpError("Le prix doit être supérieur à 0");
+            }
+            if (!isset(o.stock) || (isNum(o.stock) && Number(o.stock) < 0)) {
+              T("serv", "Règle du stock non respectée : throw new Exception");
+              throw new PhpError("Le stock ne peut pas être négatif");
+            }
+            T("serv", "Les trois règles sont respectées");
+            return o;
+          };
+          const service = {
+            getAll() {
+              T("serv", "getAll() relaie l'appel, sans règle");
+              return repo.findAll();
+            },
+            getById(id) {
+              T("serv", "getById() demande le produit au Repository");
+              const p = repo.findById(id);
+              if (!p) {
+                T(
+                  "serv",
+                  'Produit absent : throw new Exception("Produit introuvable")',
+                );
+                throw new PhpError("Produit introuvable");
+              }
+              return p;
+            },
+            create(data) {
+              const o = valider(data);
+              return repo.create(o.nom, o.prix, o.stock);
+            },
+            update(id, data) {
+              service.getById(id);
+              const o = valider(data);
+              return repo.update(id, o.nom, o.prix, o.stock);
+            },
+            remove(id) {
+              service.getById(id);
+              return repo.remove(id);
+            },
+          };
+
+          const ctrl = {
+            index() {
+              T("ctrl", "index() demande la liste au Service");
+              return respond(200, service.getAll());
+            },
+            show(id) {
+              T("ctrl", "show(" + q(id) + ") appelle le Service dans un try");
+              try {
+                return respond(200, service.getById(id));
+              } catch (e) {
+                return fail(e, 404);
+              }
+            },
+            store() {
+              T("ctrl", "store() lit le corps de la requête");
+              const data = readBody();
+              try {
+                const id = service.create(data);
+                return respond(201, { id, message: "Produit créé" });
+              } catch (e) {
+                return fail(e, 400);
+              }
+            },
+            update(id) {
+              T("ctrl", "update(" + q(id) + ") lit le corps de la requête");
+              const data = readBody();
+              try {
+                service.update(id, data);
+                return respond(200, { message: "Produit modifié" });
+              } catch (e) {
+                return fail(e, 400);
+              }
+            },
+            destroy(id) {
+              T(
+                "ctrl",
+                "destroy(" + q(id) + ") appelle le Service dans un try",
+              );
+              try {
+                service.remove(id);
+                return respond(200, { message: "Produit supprimé" });
+              } catch (e) {
+                return fail(e, 404);
+              }
+            },
+          };
+
+          /* Routeur : mêmes étapes que public/index.php */
+          const chemin = path
+            .split("/produits")
+            .join("")
+            .replace(/^\/+|\/+$/g, "");
+          const morceaux = chemin === "" ? [] : chemin.split("/");
+          T("route", '$methode = "' + method + '" et chemin = "' + path + '"');
+          T(
+            "route",
+            "Après str_replace, trim et explode : $morceaux = " +
+              q(morceaux) +
+              " (" +
+              morceaux.length +
+              ")",
+          );
+          const n = morceaux.length;
+          let action = null;
+          if (method === "GET" && n === 0) action = "index";
+          else if (method === "GET" && n === 1) action = "show";
+          else if (method === "POST" && n === 0) action = "store";
+          else if (method === "PUT" && n === 1) action = "update";
+          else if (method === "DELETE" && n === 1) action = "destroy";
+          if (!action) {
+            T(
+              "route",
+              "Aucune condition ne correspond : else, donc 404 « Route non trouvée ». Le Controller n'est pas appelé.",
+            );
+            return {
+              status: 404,
+              body: { erreur: "Route non trouvée" },
+              ct: false,
+              trace,
+            };
+          }
+          T(
+            "route",
+            "Route reconnue : $controller->" +
+              action +
+              "(" +
+              (n ? q(morceaux[0]) : "") +
+              ")",
+          );
+          return ctrl[action](morceaux[0]);
+        }
+
+        /* Interface du simulateur */
+        const PRETTY = (o) => JSON.stringify(o, null, 2);
+        const PRESETS = [
+          {
+            k: "Lister",
+            m: "GET",
+            u: "/produits",
+            b: "",
+            h: "Zéro morceau après /produits, donc le routeur appelle index(). Le prix est un texte parce que PDO renvoie les colonnes DECIMAL en chaînes.",
+          },
+          {
+            k: "Voir le produit 1",
+            m: "GET",
+            u: "/produits/1",
+            b: "",
+            h: 'Un morceau : le routeur appelle show("1"). Le Repository utilise un SELECT avec WHERE id = ?.',
+          },
+          {
+            k: "Ajouter du lait",
+            m: "POST",
+            u: "/produits",
+            b: PRETTY({ nom: "Lait", prix: 800, stock: 15 }),
+            h: "Le Service valide avant que le Repository insère. Statut 201, et une ligne apparaît dans la table. Remarque que l'id est renvoyé en texte.",
+          },
+          {
+            k: "Modifier le produit 1",
+            m: "PUT",
+            u: "/produits/1",
+            b: PRETTY({ nom: "Savon modifié", prix: 600, stock: 18 }),
+            h: "Le Service commence par vérifier que le produit existe, puis valide, puis le Repository exécute l'UPDATE.",
+          },
+          {
+            k: "Supprimer le produit 1",
+            m: "DELETE",
+            u: "/produits/1",
+            b: "",
+            h: "Pas de corps : l'URL suffit. Le Service vérifie l'existence avant le DELETE.",
+          },
+          {
+            k: "Prix négatif",
+            m: "POST",
+            u: "/produits",
+            b: PRETTY({ nom: "Lait", prix: -5, stock: 3 }),
+            h: "Le Service lève une exception avant le Repository : le chemin ne contient aucune requête SQL. Le Controller répond 400.",
+          },
+          {
+            k: "Produit inconnu",
+            m: "GET",
+            u: "/produits/999",
+            b: "",
+            h: "Le Repository ne trouve rien, le Service lève une exception, le Controller la traduit en 404.",
+          },
+          {
+            k: "Modifier un inconnu",
+            m: "PUT",
+            u: "/produits/999",
+            b: PRETTY({ nom: "Fantôme", prix: 100, stock: 1 }),
+            h: "Observe le statut : 400 et non 404. Le catch de update() répond toujours 400. C'est la petite incohérence du TP.",
+          },
+          {
+            k: "Route inconnue",
+            m: "GET",
+            u: "/produits/1/avis",
+            b: "",
+            h: "Deux morceaux : aucune condition du routeur ne correspond. Le Controller n'est pas appelé, et la réponse n'envoie pas de Content-Type.",
+          },
+          {
+            k: "JSON cassé",
+            m: "POST",
+            u: "/produits",
+            b: "{nom: Lait}",
+            h: "Ce texte n'est pas du JSON valide. json_decode renvoie null, donc le nom est considéré comme manquant : 400.",
+          },
+        ];
+        let snipKind = "curl";
+        let snipRaw = "";
+        let lastDb = {};
+
+        function minify(b) {
+          try {
+            return JSON.stringify(JSON.parse(b));
+          } catch (e) {
+            return String(b).trim();
+          }
+        }
+        function buildSnippet(kind, m, u, b) {
+          const rel =
+            "/" +
+              (u || "")
+                .trim()
+                .replace(/^https?:\/\/[^/]+/, "")
+                .replace(/^\/+/, "") || "/";
+          const hasBody = m === "POST" || m === "PUT";
+          if (kind === "curl") {
+            let s =
+              "curl" +
+              (m === "GET" ? "" : " -X " + m) +
+              " http://localhost:8000" +
+              rel;
+            if (hasBody)
+              s +=
+                ' \\\n  -H "Content-Type: application/json" \\\n  -d \'' +
+                minify(b).replace(/'/g, "'\\''") +
+                "'";
+            return s;
+          }
+          const url = rel.includes("'") ? q(rel) : "'" + rel + "'";
+          let s;
+          if (m === "GET") s = "const reponse = await fetch(" + url + ");";
+          else {
+            s =
+              "const reponse = await fetch(" +
+              url +
+              ", {\n  method: '" +
+              m +
+              "'";
+            if (hasBody) {
+              let lit;
+              try {
+                lit = JSON.stringify(JSON.parse(b), null, 2)
+                  .split("\n")
+                  .join("\n  ");
+              } catch (e) {
+                lit = q(String(b));
+              }
+              s +=
+                ",\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify(" +
+                lit +
+                ")";
+            }
+            s += "\n});";
+          }
+          return (
+            s +
+            "\nconst donnees = await reponse.json();\nconsole.log(reponse.status, donnees);"
+          );
+        }
+        function renderSnippet() {
+          const m = $('input[name="sim-method"]:checked').value;
+          snipRaw = buildSnippet(
+            snipKind,
+            m,
+            $("#sim-url").value,
+            $("#sim-body").value,
+          );
+          $("#snip").innerHTML = snipRaw
+            .split("\n")
+            .map((l) => highlight(l, snipKind === "curl" ? "bash" : "js"))
+            .join("\n");
+          $("#tab-curl").setAttribute("aria-pressed", snipKind === "curl");
+          $("#tab-fetch").setAttribute("aria-pressed", snipKind === "fetch");
+        }
+        function renderDb() {
+          const next = {};
+          $("#sim-db").innerHTML =
+            rows
+              .map((r) => {
+                const sig = JSON.stringify(r);
+                next[r.id] = sig;
+                const changed = lastDb[r.id] !== sig;
+                return (
+                  "<tr" +
+                  (changed ? ' class="flash"' : "") +
+                  '><td class="num">' +
+                  r.id +
+                  "</td><td>" +
+                  esc(r.nom) +
+                  '</td><td class="num">' +
+                  esc(r.prix) +
+                  '</td><td class="num">' +
+                  r.stock +
+                  "</td></tr>"
+                );
+              })
+              .join("") || '<tr><td colspan="4">La table est vide.</td></tr>';
+          lastDb = next;
+        }
+        function renderResult(res, hint) {
+          const st = $("#sim-status");
+          st.textContent = res.status + " " + (STATUS[res.status] || "");
+          st.classList.toggle("bad", res.status >= 400);
+          $("#sim-ct").textContent = res.ct
+            ? "Content-Type: application/json"
+            : "Content-Type absent : PHP enverra text/html par défaut";
+          $("#sim-resp").innerHTML = PRETTY(res.body)
+            .split("\n")
+            .map((l) => highlight(l, "json"))
+            .join("\n");
+          $("#sim-hint").textContent = hint || "";
+          $("#sim-hint").hidden = !hint;
+          $("#sim-trace").innerHTML = res.trace
+            .map(
+              (t) =>
+                '<li><span class="chip l-' +
+                t.layer +
+                '">' +
+                LAYER_NAMES[t.layer] +
+                "</span><div>" +
+                esc(t.text) +
+                (t.sql ? "<code>" + highlight(t.sql, "sql") + "</code>" : "") +
+                "</div></li>",
+            )
+            .join("");
+          renderDb();
+        }
+        function run(hint) {
+          const m = $('input[name="sim-method"]:checked').value;
+          const hasBody = m === "POST" || m === "PUT";
+          const res = handle(
+            m,
+            $("#sim-url").value,
+            hasBody ? $("#sim-body").value : "",
+          );
+          renderResult(res, hint);
+          renderSnippet();
+        }
+        function syncBodyField() {
+          const m = $('input[name="sim-method"]:checked').value;
+          const on = m === "POST" || m === "PUT";
+          $("#body-field").hidden = !on;
+          if (on && !$("#sim-body").value.trim())
+            $("#sim-body").value = PRETTY({
+              nom: "Lait",
+              prix: 800,
+              stock: 15,
+            });
+        }
+        function clearPresetMarks() {
+          $$("#presets button").forEach((b) =>
+            b.setAttribute("aria-pressed", "false"),
+          );
+        }
+
+        PRESETS.forEach((p, i) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = p.k;
+          b.setAttribute("aria-pressed", "false");
+          b.addEventListener("click", () => {
+            clearPresetMarks();
+            b.setAttribute("aria-pressed", "true");
+            $("#vm-" + p.m.toLowerCase()).checked = true;
+            $("#sim-url").value = p.u;
+            $("#sim-body").value = p.b;
+            syncBodyField();
+            run(p.h);
+          });
+          $("#presets").appendChild(b);
+        });
+        $("#sim-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          clearPresetMarks();
+          run(
+            "Requête personnalisée. Compare le chemin parcouru avec celui des scénarios prêts à l'emploi.",
+          );
+        });
+        $$('input[name="sim-method"]').forEach((r) =>
+          r.addEventListener("change", () => {
+            syncBodyField();
+            renderSnippet();
+          }),
+        );
+        $("#sim-url").addEventListener("input", renderSnippet);
+        $("#sim-body").addEventListener("input", renderSnippet);
+        $("#tab-curl").addEventListener("click", () => {
+          snipKind = "curl";
+          renderSnippet();
+        });
+        $("#tab-fetch").addEventListener("click", () => {
+          snipKind = "fetch";
+          renderSnippet();
+        });
+        $("#snip-copy").addEventListener("click", (e) =>
+          copyText(snipRaw, e.currentTarget),
+        );
+        $("#sim-reset").addEventListener("click", () => {
+          rows = SEED();
+          nextId = 3;
+          lastDb = {};
+          renderDb();
+          $("#sim-hint").hidden = false;
+          $("#sim-hint").textContent =
+            "Base réinitialisée : Savon et Riz 5kg sont de retour.";
+        });
+        /* État initial : la liste des produits est déjà affichée */
+        $$("#presets button")[0].setAttribute("aria-pressed", "true");
+        $("#sim-url").value = PRESETS[0].u;
+        syncBodyField();
+        run(PRESETS[0].h);
+
+        /* ---------- Quiz ---------- */
+        const QUIZ = [
+          {
+            q: "Quel verbe HTTP sert à **créer** un produit ?",
+            o: ["GET", "POST", "PUT", "DELETE"],
+            a: 1,
+            e: "POST envoie des données pour créer une ressource. Le routeur le reconnaît quand il n'y a aucun morceau après `/produits`, et appelle `store()`.",
+          },
+          {
+            q: "Quel code de statut le Controller renvoie-t-il après une création réussie ?",
+            o: ["200", "204", "201", "302"],
+            a: 2,
+            e: "201 Created dit qu'une nouvelle ressource existe. 200 dit seulement que la requête a réussi.",
+          },
+          {
+            q: "Quelle couche contient les requêtes SQL ?",
+            o: ["Le Controller", "Le Service", "Le routeur", "Le Repository"],
+            a: 3,
+            e: "Seul le Repository parle à la base. Les autres couches ignorent le SQL.",
+          },
+          {
+            q: "Pourquoi écrire `prepare()` puis `execute()` plutôt que concaténer la valeur dans la requête ?",
+            o: [
+              "Pour que la requête s'exécute plus vite",
+              "Pour qu'une valeur envoyée par l'utilisateur ne soit jamais interprétée comme du SQL",
+              "Pour que PHP convertisse le résultat en JSON",
+              "Parce que `query()` n'existe plus",
+            ],
+            a: 1,
+            e: "Avec une requête préparée, les valeurs voyagent séparément du texte SQL : c'est la protection contre les injections SQL.",
+          },
+          {
+            q: "Où vérifie-t-on que le prix est supérieur à 0 ?",
+            o: [
+              "Dans le Controller",
+              "Dans le Repository",
+              "Dans le Service",
+              "Dans index.php",
+            ],
+            a: 2,
+            e: "Les règles métier vivent dans le Service, qui ne dépend ni du HTTP ni du SQL. Elles restent valables si on change de base ou d'interface.",
+          },
+          {
+            q: "Que se passe-t-il pour `GET /produits/999` quand ce produit n'existe pas ?",
+            o: [
+              "Le Repository renvoie false, le Service lève une exception, le Controller répond 404",
+              "Le Repository répond lui-même 404",
+              "Le routeur répond 404 parce que l'id est trop grand",
+              "MySQL renvoie directement une erreur HTTP",
+            ],
+            a: 0,
+            e: "Le Repository signale l'absence par `false`, le Service la transforme en exception métier, et le Controller la traduit en code HTTP.",
+          },
+          {
+            q: "Que lit `file_get_contents('php://input')` ?",
+            o: [
+              "Le corps brut de la requête",
+              "Un fichier du serveur",
+              "Les paramètres de l'URL",
+              "Les cookies du navigateur",
+            ],
+            a: 0,
+            e: "C'est le flux du corps de la requête, donc le JSON envoyé par le client. `$_POST` ne contient pas le JSON.",
+          },
+          {
+            q: "Pourquoi le `WHERE` est-il indispensable dans un `UPDATE` ou un `DELETE` ?",
+            o: [
+              "Sans lui, toutes les lignes de la table sont touchées",
+              "Sans lui, la requête est plus lente",
+              "Sans lui, PHP lève une exception",
+              "Il sert seulement à trier les résultats",
+            ],
+            a: 0,
+            e: "Sans `WHERE`, la requête s'applique à toute la table : tous les produits modifiés, ou tous supprimés.",
+          },
+          {
+            q: "Si on remplace MySQL par PostgreSQL, quels fichiers faut-il modifier en priorité ?",
+            o: [
+              "Tous les fichiers",
+              "Seulement le Controller",
+              "Seulement index.php",
+              "Database.php et le Repository",
+            ],
+            a: 3,
+            e: "La connexion et le SQL sont isolés dans ces deux fichiers. Le Service et le Controller n'en savent rien.",
+          },
+        ];
+        let qi = 0,
+          score = 0;
+        function renderQuiz() {
+          const box = $("#quiz-box");
+          if (qi >= QUIZ.length) {
+            const msg =
+              score >= 8
+                ? "Excellent. Tu maîtrises les idées clés du TP."
+                : score >= 5
+                  ? "Bien. Relis les sections où tu as hésité, puis recommence."
+                  : "Reprends le cours depuis l'architecture, puis retente le quiz.";
+            box.innerHTML =
+              '<div class="meta"><span>Quiz terminé</span></div><p class="score">' +
+              score +
+              " / " +
+              QUIZ.length +
+              "</p><p>" +
+              msg +
+              '</p><div><button type="button" class="btn primary" id="quiz-restart">Recommencer</button></div>';
+            $("#quiz-restart").addEventListener("click", () => {
+              qi = 0;
+              score = 0;
+              renderQuiz();
+            });
+            return;
+          }
+          const it = QUIZ[qi];
+          box.innerHTML =
+            '<div class="meta"><span>Question ' +
+            (qi + 1) +
+            " sur " +
+            QUIZ.length +
+            "</span><span>Score " +
+            score +
+            "</span></div>" +
+            '<p class="q">' +
+            inline(it.q) +
+            '</p><div class="opts">' +
+            it.o
+              .map(
+                (t, i) =>
+                  '<button type="button" class="opt" data-i="' +
+                  i +
+                  '">' +
+                  inline(t) +
+                  "</button>",
+              )
+              .join("") +
+            '</div><div id="quiz-after"></div>';
+          $$(".opt", box).forEach((btn) =>
+            btn.addEventListener("click", () => {
+              const i = Number(btn.dataset.i);
+              $$(".opt", box).forEach((b) => {
+                b.disabled = true;
+              });
+              $$(".opt", box)[it.a].classList.add("good");
+              if (i === it.a) score++;
+              else btn.classList.add("bad");
+              $("#quiz-after").innerHTML =
+                '<p class="why"><b>' +
+                (i === it.a ? "Exact. " : "Pas tout à fait. ") +
+                "</b>" +
+                inline(it.e) +
+                '</p><div style="margin-top:.8rem"><button type="button" class="btn primary" id="quiz-next">' +
+                (qi === QUIZ.length - 1
+                  ? "Voir mon score"
+                  : "Question suivante") +
+                "</button></div>";
+              $("#quiz-next").addEventListener("click", () => {
+                qi++;
+                renderQuiz();
+              });
+              $("#quiz-next").focus();
+            }),
+          );
+        }
+        renderQuiz();
+      })();
+    </script>
+  </body>
+</html>
